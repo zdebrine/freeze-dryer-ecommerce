@@ -62,9 +62,9 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
           return
         }
       } else {
-        gradient.addColorStop(0, "#1a0f0a")
+        gradient.addColorStop(0, "#000000")
         gradient.addColorStop(0.5, "#3d2314")
-        gradient.addColorStop(1, "#1a0f0a")
+        gradient.addColorStop(1, "#000000")
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, width, height)
 
