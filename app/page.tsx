@@ -30,7 +30,7 @@ export default function HomePage() {
       <header className="border-b border-white/10 bg-transparent">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Package className="h-6 w-6 text-black" />
+            <Package className="h-6 w-6 text-purple-400" />
             <span className="text-xl font-bold text-white">CoffeeDry</span>
           </div>
           <div className="flex items-center gap-4">
@@ -41,7 +41,7 @@ export default function HomePage() {
             >
               Login
             </Button>
-            <Button className="bg-black hover:bg-black" onClick={() => handleNavigation("/auth/signup")}>
+            <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handleNavigation("/auth/signup")}>
               Sign Up
             </Button>
           </div>
@@ -53,7 +53,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-5xl text-center">
           <h1 className="text-balance text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Turn your coffee into
-            <span className="text-black"> instant coffee</span>
+            <span className="text-purple-400"> instant coffee</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
             Professional freeze-drying services with real-time tracking, seamless order management, and instant payment
@@ -62,7 +62,7 @@ export default function HomePage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
               size="lg"
-              className="min-w-40 bg-black hover:bg-black"
+              className="min-w-40 bg-purple-600 hover:bg-purple-700"
               onClick={() => handleNavigation("/auth/signup")}
             >
               Get Started
@@ -71,7 +71,7 @@ export default function HomePage() {
             <Button
               size="lg"
               variant="outline"
-              className="min-w-40 border-white/20 bg-transparent text-white hover:bg-white/10"
+              className="min-w-40 border-purple-400/30 bg-transparent text-white hover:bg-purple-500/10"
               onClick={() => handleNavigation("/auth/login")}
             >
               Login
@@ -85,8 +85,8 @@ export default function HomePage() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-3">
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
-                <Package className="h-8 w-8 text-amber-500" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20">
+                <Package className="h-8 w-8 text-purple-400" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Order Management</h3>
               <p className="text-white/70">
@@ -94,8 +94,8 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
-                <Zap className="h-8 w-8 text-amber-500" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20">
+                <Zap className="h-8 w-8 text-purple-400" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Machine Tracking</h3>
               <p className="text-white/70">
@@ -103,8 +103,8 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
-                <Users className="h-8 w-8 text-amber-500" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/20">
+                <Users className="h-8 w-8 text-purple-400" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Client Portal</h3>
               <p className="text-white/70">

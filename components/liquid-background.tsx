@@ -9,8 +9,18 @@ interface LiquidBackgroundProps {
   onTransitionComplete?: () => void
 }
 
+interface Ripple {
+  x: number
+  y: number
+  radius: number
+  maxRadius: number
+  speed: number
+  opacity: number
+}
+
 export function LiquidBackground({ isTransitioning = false, onTransitionComplete }: LiquidBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const ripplesRef = useRef<Ripple[]>([])
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 })
 
   useEffect(() => {
@@ -33,14 +43,10 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
 
     const drawLiquid = () => {
       const { width, height } = canvas
-      time += 0.005
-
-      // Create gradient
-      const gradient = ctx.createLinearGradient(0, 0, width, height)
+      time += 0.008
 
       if (isTransitioning) {
-        // Fill with brown tones
-        ctx.fillStyle = "#000000"
+        ctx.fillStyle = "#0a0a0a"
         ctx.fillRect(0, 0, width, height)
 
         // Add grain effect
@@ -62,26 +68,54 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
           return
         }
       } else {
-        gradient.addColorStop(0, "#000000")
-        gradient.addColorStop(0.5, "#3d2314")
+        const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.7)
+        gradient.addColorStop(0, "#1a1a2e")
+        gradient.addColorStop(0.5, "#0f0f1e")
         gradient.addColorStop(1, "#000000")
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, width, height)
 
-        // Draw flowing liquid waves
-        ctx.globalCompositeOperation = "screen"
+        ripplesRef.current = ripplesRef.current.filter((ripple) => {
+          ripple.radius += ripple.speed
+          ripple.opacity -= 0.015
 
-        for (let i = 0; i < 3; i++) {
+          if (ripple.opacity <= 0 || ripple.radius >= ripple.maxRadius) {
+            return false
+          }
+
+          // Draw ripple waves with purple tint
           ctx.beginPath()
-          const offsetY = height * 0.3 * i
+          ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
+          ctx.strokeStyle = `rgba(147, 51, 234, ${ripple.opacity * 0.6})`
+          ctx.lineWidth = 2
+          ctx.stroke()
 
-          for (let x = 0; x < width; x += 2) {
-            const waveInfluence = mousePos.y * 0.3
+          // Inner glow
+          ctx.beginPath()
+          ctx.arc(ripple.x, ripple.y, ripple.radius - 5, 0, Math.PI * 2)
+          ctx.strokeStyle = `rgba(196, 181, 253, ${ripple.opacity * 0.3})`
+          ctx.lineWidth = 1
+          ctx.stroke()
+
+          return true
+        })
+
+        ctx.globalCompositeOperation = "lighten"
+
+        for (let i = 0; i < 4; i++) {
+          ctx.beginPath()
+
+          for (let x = 0; x < width; x += 3) {
+            const distanceFromMouse = Math.sqrt(
+              Math.pow((x - mousePos.x * width) / width, 2) + Math.pow((height / 2 - mousePos.y * height) / height, 2),
+            )
+            const mouseInfluence = Math.max(0, 1 - distanceFromMouse * 2)
+
             const y =
               height / 2 +
-              offsetY +
-              Math.sin(x * 0.005 + time + i) * 30 * (1 + waveInfluence) +
-              Math.cos(x * 0.003 + time * 1.5 + i) * 20 * (1 + waveInfluence)
+              Math.sin(x * 0.008 + time + i * 0.5) * (20 + mouseInfluence * 30) +
+              Math.cos(x * 0.004 + time * 1.2 - i * 0.3) * (15 + mouseInfluence * 20) +
+              Math.sin(time * 0.5 + i) * (10 + mouseInfluence * 15)
 
             if (x === 0) {
               ctx.moveTo(x, y)
@@ -94,8 +128,11 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
           ctx.lineTo(0, height)
           ctx.closePath()
 
-          const alpha = 0.05 + i * 0.02 + mousePos.x * 0.05
-          ctx.fillStyle = `rgba(139, 69, 19, ${alpha})`
+          // Purple gradient waves
+          const waveGradient = ctx.createLinearGradient(0, height / 2, 0, height)
+          waveGradient.addColorStop(0, `rgba(147, 51, 234, ${0.03 + i * 0.02})`)
+          waveGradient.addColorStop(1, `rgba(79, 70, 229, ${0.01 + i * 0.01})`)
+          ctx.fillStyle = waveGradient
           ctx.fill()
         }
 
@@ -115,15 +152,47 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isTransitioning) return
+
     const x = e.clientX / window.innerWidth
     const y = e.clientY / window.innerHeight
     setMousePos({ x, y })
+
+    // Create ripple at mouse position (throttled)
+    if (Math.random() > 0.85) {
+      ripplesRef.current.push({
+        x: e.clientX,
+        y: e.clientY,
+        radius: 0,
+        maxRadius: 150 + Math.random() * 100,
+        speed: 2 + Math.random() * 2,
+        opacity: 0.8,
+      })
+
+      // Limit ripples to prevent performance issues
+      if (ripplesRef.current.length > 15) {
+        ripplesRef.current.shift()
+      }
+    }
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isTransitioning) return
+
+    ripplesRef.current.push({
+      x: e.clientX,
+      y: e.clientY,
+      radius: 0,
+      maxRadius: 300,
+      speed: 4,
+      opacity: 1,
+    })
   }
 
   return (
     <canvas
       ref={canvasRef}
       onMouseMove={handleMouseMove}
+      onClick={handleClick}
       className="fixed inset-0 -z-10"
       style={{ willChange: "contents" }}
     />
