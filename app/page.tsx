@@ -30,7 +30,7 @@ export default function HomePage() {
       <header className="border-b border-white/10 bg-transparent">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Package className="h-6 w-6 text-amber-600" />
+            <Package className="h-6 w-6 text-black" />
             <span className="text-xl font-bold text-white">CoffeeDry</span>
           </div>
           <div className="flex items-center gap-4">
@@ -41,7 +41,7 @@ export default function HomePage() {
             >
               Login
             </Button>
-            <Button className="bg-amber-600 hover:bg-amber-700" onClick={() => handleNavigation("/auth/signup")}>
+            <Button className="bg-black hover:bg-amber-700" onClick={() => handleNavigation("/auth/signup")}>
               Sign Up
             </Button>
           </div>
@@ -62,7 +62,7 @@ export default function HomePage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
               size="lg"
-              className="min-w-40 bg-amber-600 hover:bg-amber-700"
+              className="min-w-40 bg-black hover:bg-amber-700"
               onClick={() => handleNavigation("/auth/signup")}
             >
               Get Started
@@ -85,7 +85,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-3">
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-600/20">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
                 <Package className="h-8 w-8 text-amber-500" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Order Management</h3>
@@ -94,7 +94,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-600/20">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
                 <Zap className="h-8 w-8 text-amber-500" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Machine Tracking</h3>
@@ -103,7 +103,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-600/20">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/20">
                 <Users className="h-8 w-8 text-amber-500" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-white">Client Portal</h3>
