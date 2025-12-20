@@ -40,7 +40,7 @@ export function LiquidBackground({ isTransitioning = false, onTransitionComplete
 
       if (isTransitioning) {
         // Fill with brown tones
-        ctx.fillStyle = "#2d1810"
+        ctx.fillStyle = "#000000"
         ctx.fillRect(0, 0, width, height)
 
         // Add grain effect
