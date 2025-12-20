@@ -41,7 +41,7 @@ export default function HomePage() {
             >
               Login
             </Button>
-            <Button className="bg-black hover:bg-amber-700" onClick={() => handleNavigation("/auth/signup")}>
+            <Button className="bg-black hover:bg-black" onClick={() => handleNavigation("/auth/signup")}>
               Sign Up
             </Button>
           </div>
@@ -53,7 +53,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-5xl text-center">
           <h1 className="text-balance text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Turn your coffee into
-            <span className="text-amber-500"> instant coffee</span>
+            <span className="text-black"> instant coffee</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
             Professional freeze-drying services with real-time tracking, seamless order management, and instant payment
@@ -62,7 +62,7 @@ export default function HomePage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
               size="lg"
-              className="min-w-40 bg-black hover:bg-amber-700"
+              className="min-w-40 bg-black hover:bg-black"
               onClick={() => handleNavigation("/auth/signup")}
             >
               Get Started
