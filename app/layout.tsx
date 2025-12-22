@@ -29,8 +29,8 @@ const lora = Lora({
 })
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
+  title: "Coracle Coffee: Instant",
+  description: "Instant coffee processor",
   generator: "v0.app",
 }
 

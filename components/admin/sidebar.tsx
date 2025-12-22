@@ -31,7 +31,7 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b px-6">
         <Package className="h-6 w-6 text-primary" />
-        <span className="text-xl font-bold">CoffeeDry</span>
+        <span className="text-xl font-bold">Coracle</span>
       </div>
 
       {/* Navigation */}

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Package, Users, Zap } from "lucide-react"
+import { OptimizedHeroVideo } from "@/components/ui/OptimizedHeroVideo"
 
 export default function HomePage() {
   return (
@@ -10,7 +11,7 @@ export default function HomePage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <Package className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">CoffeeDry</span>
+            <span className="text-xl font-bold">Coracle</span>
           </div>
           <div className="flex items-center gap-4">
             <Button asChild variant="ghost">
@@ -23,14 +24,32 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="flex flex-1 items-center justify-center bg-gradient-to-b from-background to-muted/20 px-4 py-20">
-        <div className="container mx-auto max-w-5xl text-center">
-          <h1 className="text-balance text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-            Coffee Freeze-Drying
-            <span className="text-primary"> Order Management</span>
+      {/* Hero Section (Full-screen background video) */}
+      <section className="relative flex flex-1 items-center justify-center overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0">
+          <OptimizedHeroVideo
+            posterSrc="/hero.png"
+            posterAlt="Coracle dashboard preview"
+            webmSrc={process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL}
+            mp4Src={process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL}
+            priorityPoster
+            className="h-full w-full border-0 rounded-none"
+            fill
+            useAspectRatio={false}
+          />
+        </div>
+
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/60" />
+
+        {/* Content */}
+        <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
+          <h1 className="text-balance text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Turn your shop's coffee into
+            <span className="text-primary"> Instant Coffee</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
             Streamline your coffee freeze-drying operations with real-time order tracking, machine management, and
             client portal access.
           </p>
@@ -41,7 +60,7 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="min-w-40 bg-transparent">
+            <Button asChild size="lg" variant="outline" className="min-w-40 bg-transparent text-white hover:text-white">
               <Link href="/auth/login">Login</Link>
             </Button>
           </div>
@@ -86,7 +105,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 CoffeeDry. All rights reserved.</p>
+          <p>&copy; 2025 Coracle. All rights reserved.</p>
         </div>
       </footer>
     </div>
