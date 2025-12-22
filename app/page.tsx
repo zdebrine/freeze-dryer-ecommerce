@@ -77,7 +77,7 @@ export default function HomePage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild size="lg" className="min-w-40 uppercase">
               <Link href="/auth/signup">
-                Start a batch
+                Start a Batch
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
