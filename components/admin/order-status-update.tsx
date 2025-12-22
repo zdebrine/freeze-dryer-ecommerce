@@ -13,19 +13,28 @@ import { sendProcessingStageNotification } from "@/lib/actions/order-notificatio
 
 type Machine = { id: string; machine_name: string; machine_code: string; status: string }
 
+const STATUS_OPTIONS = [
+  { value: "pending_confirmation", label: "Pending Confirmation" },
+  { value: "awaiting_shipment", label: "Confirmed: Awaiting Shipment" },
+  { value: "pre_freeze_prep", label: "In Progress: Pre-Freeze Prep" },
+  { value: "freeze_drying", label: "In Progress: Freeze Drying", requiresMachine: true },
+  { value: "final_packaging", label: "Final Packaging" },
+  { value: "ready_for_payment", label: "Ready For Payment" },
+  { value: "completed", label: "Completed" },
+]
+
 export function OrderStatusUpdate({
   orderId,
   currentStatus,
   currentMachineId,
-  currentStage,
+  currentUnifiedStatus,
 }: {
   orderId: string
   currentStatus: string
   currentMachineId: string | null
-  currentStage?: string | null
+  currentUnifiedStatus?: string | null
 }) {
-  const [status, setStatus] = useState(currentStatus)
-  const [stage, setStage] = useState(currentStage || "")
+  const [unifiedStatus, setUnifiedStatus] = useState(currentUnifiedStatus || currentStatus)
   const [machineId, setMachineId] = useState(currentMachineId || "")
   const [notes, setNotes] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -42,10 +51,10 @@ export function OrderStatusUpdate({
   }, [])
 
   const handleUpdate = async () => {
-    if (status === "in_progress" && !machineId) {
+    if (unifiedStatus === "freeze_drying" && !machineId) {
       toast({
         title: "Machine required",
-        description: "You must assign a freeze dryer machine before moving the order to In Progress.",
+        description: "You must assign a freeze dryer machine for the Freeze Drying stage.",
         variant: "destructive",
       })
       return
@@ -60,19 +69,40 @@ export function OrderStatusUpdate({
 
       const { data: orderData } = await supabase
         .from("orders")
-        .select("machine_id, order_stage")
+        .select("machine_id, unified_status, status")
         .eq("id", orderId)
         .single()
 
       const previousMachineId = orderData?.machine_id
-      const previousStage = orderData?.order_stage
+      const previousUnifiedStatus = orderData?.unified_status || orderData?.status
 
-      // Update order status, stage, and machine assignment
+      let legacyStatus = "pending"
+      if (["awaiting_shipment"].includes(unifiedStatus)) {
+        legacyStatus = "confirmed"
+      } else if (["pre_freeze_prep", "freeze_drying", "final_packaging"].includes(unifiedStatus)) {
+        legacyStatus = "in_progress"
+      } else if (["ready_for_payment", "completed"].includes(unifiedStatus)) {
+        legacyStatus = "completed"
+      }
+
+      const unifiedToLegacyStageMap: Record<string, string> = {
+        pending_confirmation: "pending_confirmation",
+        awaiting_shipment: "awaiting_shipment",
+        pre_freeze_prep: "pre_freeze",
+        freeze_drying: "freezing",
+        final_packaging: "packaging",
+        ready_for_payment: "payment_pending",
+        completed: "completed",
+      }
+      const legacyOrderStage = unifiedToLegacyStageMap[unifiedStatus] || unifiedStatus
+
+      // Update order with unified status
       const { error: updateError } = await supabase
         .from("orders")
         .update({
-          status,
-          order_stage: stage || null,
+          unified_status: unifiedStatus,
+          status: legacyStatus,
+          order_stage: legacyOrderStage, // Use mapped legacy value for constraint compliance
           machine_id: machineId || null,
           updated_at: new Date().toISOString(),
         })
@@ -80,12 +110,12 @@ export function OrderStatusUpdate({
 
       if (updateError) throw updateError
 
-      // Handle machine status updates
-      if (status === "in_progress" && machineId) {
+      if (unifiedStatus === "freeze_drying" && machineId) {
         await supabase.from("machines").update({ status: "in_use" }).eq("id", machineId)
       }
 
-      if (status === "completed" && previousMachineId) {
+      // Release machine when moving past freeze_drying or to completed
+      if (previousUnifiedStatus === "freeze_drying" && unifiedStatus !== "freeze_drying" && previousMachineId) {
         await supabase.from("machines").update({ status: "available" }).eq("id", previousMachineId)
       }
 
@@ -93,20 +123,28 @@ export function OrderStatusUpdate({
       await supabase.from("order_logs").insert({
         order_id: orderId,
         user_id: user?.id,
-        action: stage ? `Status and stage updated to ${stage.replace(/_/g, " ")}` : "Status updated",
-        previous_status: currentStatus,
-        new_status: status,
+        action: `Status updated to ${STATUS_OPTIONS.find((opt) => opt.value === unifiedStatus)?.label}`,
+        previous_status: previousUnifiedStatus,
+        new_status: unifiedStatus,
         notes: notes || null,
       })
 
-      // Send email notification if stage changed to a processing stage
-      if (stage && stage !== previousStage && ["pre_freeze", "freezing", "post_freeze", "packaging"].includes(stage)) {
-        await sendProcessingStageNotification(orderId, stage)
+      if (
+        unifiedStatus !== previousUnifiedStatus &&
+        ["pre_freeze_prep", "freeze_drying", "final_packaging"].includes(unifiedStatus)
+      ) {
+        // Map unified status to legacy stage names for email templates
+        const stageMap: Record<string, string> = {
+          pre_freeze_prep: "pre_freeze",
+          freeze_drying: "freezing",
+          final_packaging: "packaging",
+        }
+        await sendProcessingStageNotification(orderId, stageMap[unifiedStatus] || unifiedStatus)
       }
 
       toast({
         title: "Order updated",
-        description: `Order status changed to ${status.replace("_", " ")}`,
+        description: `Order status changed to ${STATUS_OPTIONS.find((opt) => opt.value === unifiedStatus)?.label}`,
       })
 
       router.refresh()
@@ -122,75 +160,55 @@ export function OrderStatusUpdate({
     }
   }
 
-  const showMachineWarning = status === "in_progress" && !machineId
+  const currentOption = STATUS_OPTIONS.find((opt) => opt.value === unifiedStatus)
+  const showMachineSelector = currentOption?.requiresMachine
+  const showMachineWarning = showMachineSelector && !machineId
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="status">Order Status</Label>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger id="status">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="stage">Processing Stage</Label>
-          <Select value={stage} onValueChange={setStage}>
-            <SelectTrigger id="stage">
-              <SelectValue placeholder="Select stage" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending_confirmation">Pending Confirmation</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="awaiting_shipment">Awaiting Shipment</SelectItem>
-              <SelectItem value="package_in_transit">Package In Transit</SelectItem>
-              <SelectItem value="package_received">Package Received</SelectItem>
-              <SelectItem value="pre_freeze">Pre-Freeze Prep</SelectItem>
-              <SelectItem value="freezing">Freeze-Drying</SelectItem>
-              <SelectItem value="post_freeze">Post-Freeze Processing</SelectItem>
-              <SelectItem value="packaging">Final Packaging</SelectItem>
-              <SelectItem value="completed">Ready for Payment</SelectItem>
-              <SelectItem value="payment_pending">Payment Pending</SelectItem>
-              <SelectItem value="payment_completed">Payment Completed</SelectItem>
-              <SelectItem value="shipped_to_customer">Shipped to Customer</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       <div className="space-y-2">
-        <Label htmlFor="machine">Assigned Machine</Label>
-        <Select value={machineId} onValueChange={setMachineId}>
-          <SelectTrigger id="machine">
-            <SelectValue placeholder="Select a machine" />
+        <Label htmlFor="unified-status">Order Status</Label>
+        <Select value={unifiedStatus} onValueChange={setUnifiedStatus}>
+          <SelectTrigger id="unified-status">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {machines
-              .filter((m) => m.status === "available" || m.id === currentMachineId)
-              .map((machine) => (
-                <SelectItem key={machine.id} value={machine.id}>
-                  {machine.machine_name} ({machine.machine_code}) - {machine.status}
-                </SelectItem>
-              ))}
+            {STATUS_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
-      {showMachineWarning && (
-        <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
-          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-          <p>You must assign a freeze dryer machine to move this order to In Progress.</p>
-        </div>
+      {showMachineSelector && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="machine">Assigned Machine</Label>
+            <Select value={machineId} onValueChange={setMachineId}>
+              <SelectTrigger id="machine">
+                <SelectValue placeholder="Select a machine" />
+              </SelectTrigger>
+              <SelectContent>
+                {machines
+                  .filter((m) => m.status === "available" || m.id === currentMachineId)
+                  .map((machine) => (
+                    <SelectItem key={machine.id} value={machine.id}>
+                      {machine.machine_name} ({machine.machine_code}) - {machine.status}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {showMachineWarning && (
+            <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <p>You must assign a freeze dryer machine for the Freeze Drying stage.</p>
+            </div>
+          )}
+        </>
       )}
 
       <div className="space-y-2">
@@ -200,7 +218,7 @@ export function OrderStatusUpdate({
 
       <Button
         onClick={handleUpdate}
-        disabled={isLoading || (status === currentStatus && machineId === currentMachineId && stage === currentStage)}
+        disabled={isLoading || (unifiedStatus === currentUnifiedStatus && machineId === currentMachineId)}
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Update Order

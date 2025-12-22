@@ -22,35 +22,34 @@ export function PackageReceivedButton({ orderId }: { orderId: string }) {
         data: { user },
       } = await supabase.auth.getUser()
 
-      // Update order
       const { error } = await supabase
         .from("orders")
         .update({
           package_received: true,
           package_received_at: new Date().toISOString(),
-          order_stage: "package_received",
+          unified_status: "pre_freeze_prep",
+          status: "in_progress",
           updated_at: new Date().toISOString(),
         })
         .eq("id", orderId)
 
       if (error) throw error
 
-      // Create log
       await supabase.from("order_logs").insert({
         order_id: orderId,
         user_id: user?.id,
-        action: "Package received",
-        notes: "Coffee package has arrived and been logged",
-        previous_status: "confirmed",
-        new_status: "confirmed",
+        action: "Package received - moved to Pre-Freeze Prep",
+        notes: "Coffee package has arrived and is ready for processing",
+        previous_status: "awaiting_shipment",
+        new_status: "pre_freeze_prep",
       })
 
       // Send notification
       await sendPackageReceivedNotification(orderId)
 
       toast({
-        title: "Package confirmed",
-        description: "The client has been notified that their package arrived.",
+        title: "Package received",
+        description: "Order moved to Pre-Freeze Prep stage.",
       })
 
       router.refresh()

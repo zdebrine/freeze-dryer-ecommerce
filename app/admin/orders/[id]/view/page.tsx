@@ -50,10 +50,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     notFound()
   }
 
-  const needsConfirmation = order.status === "pending" && !order.order_stage
-  const needsPackageConfirmation = order.tracking_number && !order.package_received
+  const needsConfirmation = (order.unified_status || order.status) === "pending_confirmation"
+  const needsPackageConfirmation = (order.unified_status || order.order_stage) === "awaiting_shipment"
   const canCreateShopifyCheckout =
-    order.status === "completed" && !order.shopify_checkout_url && order.order_stage !== "payment_pending"
+    (order.unified_status || order.order_stage) === "ready_for_payment" && !order.shopify_checkout_url
 
   return (
     <div className="space-y-6 p-8">
@@ -77,7 +77,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <div className="flex items-center gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{order.order_number}</h1>
         <Badge className={statusColors[order.status as keyof typeof statusColors]}>
-          {order.status.replace("_", " ")}
+          {order.unified_status ? order.unified_status.replace(/_/g, " ") : order.status.replace("_", " ")}
         </Badge>
       </div>
 
@@ -96,9 +96,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       {needsPackageConfirmation && (
         <Card className="border-amber-500">
           <CardHeader>
-            <CardTitle>Package In Transit</CardTitle>
+            <CardTitle>Awaiting Package</CardTitle>
             <CardDescription>
-              Client has provided tracking number: <span className="font-mono font-bold">{order.tracking_number}</span>
+              {order.tracking_number
+                ? `Client provided tracking: ${order.tracking_number}. Mark as received when package arrives.`
+                : "Waiting for client to ship their coffee. Mark as received when package arrives."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -193,25 +195,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 </Badge>
               </div>
             )}
-            {order.order_stage && (
+            {order.unified_status && (
               <div className="grid gap-2">
-                <p className="text-sm text-muted-foreground">Processing Stage</p>
+                <p className="text-sm text-muted-foreground">Current Status</p>
                 <Badge variant="outline" className="w-fit capitalize">
-                  {order.order_stage.replace(/_/g, " ")}
+                  {order.unified_status.replace(/_/g, " ")}
                 </Badge>
-              </div>
-            )}
-            {order.shopify_checkout_url && (
-              <div className="grid gap-2">
-                <p className="text-sm text-muted-foreground">Shopify Checkout</p>
-                <a
-                  href={order.shopify_checkout_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  View Checkout Link
-                </a>
               </div>
             )}
           </CardContent>
@@ -251,15 +240,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       {/* Status Update */}
       <Card>
         <CardHeader>
-          <CardTitle>Update Status & Processing Stage</CardTitle>
-          <CardDescription>Change the order status, stage, and add notes</CardDescription>
+          <CardTitle>Update Order Status</CardTitle>
+          <CardDescription>Change the order status and add notes</CardDescription>
         </CardHeader>
         <CardContent>
           <OrderStatusUpdate
             orderId={id}
             currentStatus={order.status}
             currentMachineId={order.machine_id}
-            currentStage={order.order_stage}
+            currentUnifiedStatus={order.unified_status}
           />
         </CardContent>
       </Card>

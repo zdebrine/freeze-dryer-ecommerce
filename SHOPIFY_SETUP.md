@@ -63,11 +63,11 @@ This guide will help you set up the Shopify integration for the Coffee Freeze-Dr
 
 Add these environment variables to your Vercel project or `.env` file:
 
-```env
+\`\`\`env
 SHOPIFY_STORE_NAME=your-store-name
 SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxxxx
 SHOPIFY_WEBHOOK_SECRET=your-webhook-secret
-```
+\`\`\`
 
 ## Step 7: Configure Shopify Products (Optional)
 
@@ -112,4 +112,4 @@ If you want to use specific Shopify products instead of dynamic pricing:
 - [ ] Test orders completed successfully
 - [ ] Email notifications working
 - [ ] SSL certificate active on webhook endpoint
-```
+\`\`\`

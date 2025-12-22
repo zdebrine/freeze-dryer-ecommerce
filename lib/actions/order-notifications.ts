@@ -124,33 +124,35 @@ export async function sendTrackingSubmittedNotification(orderId: string) {
 
   // Try to get admin from assigned_admin_id
   if (order.assigned_admin_id) {
-    const { data: adminProfile } = await supabase
+    const { data: adminProfile, error: adminError } = await supabase
       .from("profiles")
       .select("full_name, email")
       .eq("id", order.assigned_admin_id)
-      .single()
+      .maybeSingle()
 
     if (adminProfile) {
       adminEmail = adminProfile.email
       adminName = adminProfile.full_name
+    } else if (adminError) {
+      console.error("[v0] Error fetching admin profile:", adminError)
     }
   }
 
   // Fallback: Try to find an admin associated with this client
   if (!adminEmail && order.client_id) {
-    const { data: adminClient } = await supabase
+    const { data: adminClient, error: adminClientError } = await supabase
       .from("admin_clients")
       .select("admin_id")
       .eq("client_id", order.client_id)
       .limit(1)
-      .single()
+      .maybeSingle()
 
     if (adminClient?.admin_id) {
-      const { data: adminProfile } = await supabase
+      const { data: adminProfile, error: adminProfileError } = await supabase
         .from("profiles")
         .select("full_name, email")
         .eq("id", adminClient.admin_id)
-        .single()
+        .maybeSingle()
 
       if (adminProfile) {
         adminEmail = adminProfile.email
@@ -158,7 +160,11 @@ export async function sendTrackingSubmittedNotification(orderId: string) {
 
         // Update the order with the found admin
         await supabase.from("orders").update({ assigned_admin_id: adminClient.admin_id }).eq("id", orderId)
+      } else if (adminProfileError) {
+        console.error("[v0] Error fetching admin profile from client relationship:", adminProfileError)
       }
+    } else if (adminClientError) {
+      console.error("[v0] Error fetching admin-client relationship:", adminClientError)
     }
   }
 

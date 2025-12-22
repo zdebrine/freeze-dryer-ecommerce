@@ -31,8 +31,7 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
       const { error } = await supabase
         .from("orders")
         .update({
-          status: "confirmed",
-          order_stage: "awaiting_shipment",
+          unified_status: "awaiting_shipment",
           assigned_admin_id: currentOrder?.assigned_admin_id || user?.id,
           updated_at: new Date().toISOString(),
         })
@@ -80,12 +79,10 @@ export function OrderConfirmation({ orderId }: { orderId: string }) {
         data: { user },
       } = await supabase.auth.getUser()
 
-      // Update order to cancelled
       const { error } = await supabase
         .from("orders")
         .update({
-          status: "cancelled",
-          order_stage: "cancelled",
+          unified_status: "pending_confirmation",
           updated_at: new Date().toISOString(),
         })
         .eq("id", orderId)
