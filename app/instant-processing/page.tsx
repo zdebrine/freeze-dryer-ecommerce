@@ -28,7 +28,7 @@ export default function InstantProcessingPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             {/* <Package className={`h-6 w-6 transition-colors ${isScrolled ? "text-primary" : "text-white"}`} /> */}
-            <span className={`text-xl font-hero transition-colors ${isScrolled ? "" : "text-white"}`}>mernin'</span>
+            <span className={`text-xl font-hero transition-colors ${isScrolled ? "text-primary" : "text-white"}`}>mernin'</span>
           </div>
           <div className="flex items-center gap-4">
             <Button

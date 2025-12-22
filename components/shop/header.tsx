@@ -2,11 +2,17 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Package, ShoppingCart } from "lucide-react"
+import { ShoppingCart } from "lucide-react"
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 
 export function ShopHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+
+  const isHomePage = pathname === "/"
+
+  const shouldUseTransparentHeader = isHomePage && !isScrolled
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,19 +25,24 @@ export function ShopHeader() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-sm border-b" : "bg-transparent border-b border-white/10"
+        shouldUseTransparentHeader
+          ? "bg-transparent border-b border-white/10"
+          : "bg-background/95 backdrop-blur-sm border-b"
       }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          {/* <Package className={`h-6 w-6 transition-colors ${isScrolled ? "text-primary" : "text-white"}`} /> */}
-          <span className={`text-3xl font-hero transition-colors ${isScrolled ? "text-primary" : "text-white"}`}>mernin'</span>
+          <span
+            className={`text-3xl font-hero transition-colors ${shouldUseTransparentHeader ? "text-white" : "text-primary"}`}
+          >
+            mernin'
+          </span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link
             href="/#products"
             className={`text-sm font-medium transition-colors hover:text-primary ${
-              isScrolled ? "" : "text-white hover:text-white/80"
+              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
             }`}
           >
             Shop
@@ -39,7 +50,7 @@ export function ShopHeader() {
           <Link
             href="/instant-processing"
             className={`text-sm font-medium transition-colors hover:text-primary ${
-              isScrolled ? "" : "text-white hover:text-white/80"
+              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
             }`}
           >
             For Roasters
@@ -47,7 +58,7 @@ export function ShopHeader() {
           <Link
             href="/#about"
             className={`text-sm font-medium transition-colors hover:text-primary ${
-              isScrolled ? "" : "text-white hover:text-white/80"
+              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
             }`}
           >
             About
@@ -58,7 +69,7 @@ export function ShopHeader() {
             asChild
             variant="ghost"
             size="icon"
-            className={isScrolled ? "" : "text-white hover:text-white hover:bg-white/10"}
+            className={shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}
           >
             <Link href="/auth/login">
               <ShoppingCart className="h-5 w-5" />
@@ -67,8 +78,8 @@ export function ShopHeader() {
           </Button>
           <Button
             asChild
-            variant={isScrolled ? "ghost" : "ghost"}
-            className={isScrolled ? "" : "text-white hover:text-white hover:bg-white/10"}
+            variant="ghost"
+            className={shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}
           >
             <Link href="/auth/login">Login</Link>
           </Button>

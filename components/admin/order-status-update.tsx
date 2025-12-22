@@ -43,6 +43,14 @@ export function OrderStatusUpdate({
   const supabase = createClient()
 
   useEffect(() => {
+    setUnifiedStatus(currentUnifiedStatus || currentStatus)
+  }, [currentUnifiedStatus, currentStatus])
+
+  useEffect(() => {
+    setMachineId(currentMachineId || "")
+  }, [currentMachineId])
+
+  useEffect(() => {
     const fetchMachines = async () => {
       const { data } = await supabase.from("machines").select("id, machine_name, machine_code, status")
       setMachines(data || [])

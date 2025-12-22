@@ -48,7 +48,7 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -59,7 +59,7 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-full sm:w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -81,9 +81,12 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
       ) : (
         <div className="space-y-3">
           {filteredOrders.map((order) => (
-            <div key={order.id} className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50">
+            <div
+              key={order.id}
+              className="flex flex-col gap-3 rounded-lg border p-4 hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
+            >
               <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <p className="font-semibold">{order.order_number}</p>
                   <Badge className={statusColors[order.status as keyof typeof statusColors]}>
                     {order.status.replace("_", " ")}
@@ -101,10 +104,12 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
                     day: "numeric",
                   })}
                   {order.machines && ` • ${order.machines.machine_name}`}
-                  {order.assigned_admin && ` • Assigned to: ${order.assigned_admin.full_name}`}
+                  {order.assigned_admin && (
+                    <span className="hidden sm:inline"> • Assigned to: {order.assigned_admin.full_name}</span>
+                  )}
                 </p>
               </div>
-              <Button asChild variant="ghost" size="sm">
+              <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto">
                 <Link href={`/admin/orders/${order.id}/view`}>
                   View
                   <ArrowRight className="ml-2 h-4 w-4" />

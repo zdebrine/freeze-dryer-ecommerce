@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export function CreateOrderForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +19,7 @@ export function CreateOrderForm() {
   const [clients, setClients] = useState<{ id: string; full_name: string; company_name: string | null }[]>([])
   const [selectedClientId, setSelectedClientId] = useState<string>("")
   const router = useRouter()
+  const { toast } = useToast()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,16 +97,27 @@ export function CreateOrderForm() {
         special_instructions: formData.get("special_instructions") as string,
         requested_completion_date: formData.get("requested_completion_date") as string,
         status: "pending",
+        unified_status: "pending",
         assigned_admin_id: user.id,
       })
 
       if (insertError) throw insertError
+
+      toast({
+        title: "Order created",
+        description: `Order ${orderNumber} has been created successfully.`,
+      })
 
       router.push("/admin/orders")
       router.refresh()
     } catch (err) {
       console.error("[v0] Order creation error:", err)
       setError(err instanceof Error ? err.message : "Failed to create order")
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to create order",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }

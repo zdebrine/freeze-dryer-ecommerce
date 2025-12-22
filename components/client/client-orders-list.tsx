@@ -4,12 +4,27 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
-const statusColors = {
-  pending: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  confirmed: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  in_progress: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  completed: "bg-green-500/10 text-green-600 border-green-500/20",
-  cancelled: "bg-red-500/10 text-red-600 border-red-500/20",
+const statusConfig = {
+  pending_confirmation: {
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+    label: "Pending Confirmation",
+  },
+  awaiting_shipment: {
+    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    label: "Confirmed: Awaiting Shipment",
+  },
+  package_received: { color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20", label: "Package Received" },
+  pre_freeze_prep: {
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+    label: "In Progress: Pre-Freeze Prep",
+  },
+  freeze_drying: {
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+    label: "In Progress: Freeze Drying",
+  },
+  final_packaging: { color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20", label: "Final Packaging" },
+  ready_for_payment: { color: "bg-green-500/10 text-green-600 border-green-500/20", label: "Ready For Payment" },
+  completed: { color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", label: "Completed" },
 }
 
 export async function ClientOrdersList({ userId }: { userId: string }) {
@@ -38,31 +53,39 @@ export async function ClientOrdersList({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-3">
-      {orders.map((order) => (
-        <div key={order.id} className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50">
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center gap-3">
-              <p className="font-semibold">{order.order_number}</p>
-              <Badge className={statusColors[order.status as keyof typeof statusColors]}>
-                {order.status.replace("_", " ")}
-              </Badge>
+      {orders.map((order) => {
+        const currentStatus = order.unified_status || "pending_confirmation"
+        const statusInfo = statusConfig[currentStatus as keyof typeof statusConfig] || statusConfig.pending_confirmation
+
+        return (
+          <div
+            key={order.id}
+            className="flex flex-col gap-3 rounded-lg border p-4 hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <p className="font-semibold">{order.order_number}</p>
+                <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {order.coffee_type} • {order.quantity_kg}kg
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Ordered on {new Date(order.order_date).toLocaleDateString()}
+                {order.machines && (
+                  <span className="hidden sm:inline"> • Processing on {order.machines.machine_name}</span>
+                )}
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              {order.coffee_type} • {order.quantity_kg}kg
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Ordered on {new Date(order.order_date).toLocaleDateString()}
-              {order.machines && ` • Processing on ${order.machines.machine_name}`}
-            </p>
+            <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto">
+              <Link href={`/client/orders/${order.id}`}>
+                View
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
-          <Button asChild variant="ghost" size="sm">
-            <Link href={`/client/orders/${order.id}`}>
-              View
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
