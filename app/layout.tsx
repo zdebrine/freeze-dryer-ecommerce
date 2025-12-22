@@ -1,17 +1,14 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
+import localFont from "next/font/local"
 
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 
-import { Plus_Jakarta_Sans, IBM_Plex_Mono, Lora, Plus_Jakarta_Sans as V0_Font_Plus_Jakarta_Sans, IBM_Plex_Mono as V0_Font_IBM_Plex_Mono, Lora as V0_Font_Lora } from 'next/font/google'
+import { Plus_Jakarta_Sans, IBM_Plex_Mono, Lora } from "next/font/google"
 
-// Initialize fonts
-const _plusJakartaSans = V0_Font_Plus_Jakarta_Sans({ subsets: ['latin'], weight: ["200","300","400","500","600","700","800"] })
-const _ibmPlexMono = V0_Font_IBM_Plex_Mono({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700"] })
-const _lora = V0_Font_Lora({ subsets: ['latin'], weight: ["400","500","600","700"] })
-
+// Google fonts
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"],
@@ -28,6 +25,13 @@ const lora = Lora({
   variable: "--font-serif",
 })
 
+// Local font (Swell)
+const swell = localFont({
+  src: "./fonts/swell-regular.otf",
+  variable: "--font-swell",
+  display: "swap",
+})
+
 export const metadata: Metadata = {
   title: "Coracle Coffee: Instant",
   description: "Instant coffee processor",
@@ -41,7 +45,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${plusJakartaSans.variable} ${ibmPlexMono.variable} ${lora.variable} font-sans antialiased`}>
+      <body
+        className={[
+          plusJakartaSans.variable,
+          ibmPlexMono.variable,
+          lora.variable,
+          swell.variable,
+          "font-sans antialiased",
+        ].join(" ")}
+      >
         {children}
         <Toaster />
         <Analytics />

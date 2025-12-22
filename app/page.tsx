@@ -45,69 +45,73 @@ export default function HomePage() {
 
         {/* Content */}
         <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
-          <h1 className="text-balance text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Turn your shop's coffee into
-            <span className="text-primary"> Instant Coffee</span>
+          <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-white sm:text-6xl lg:text-7xl">
+            Launch your own
+            <span className="text-white underline"> Instant Coffee line</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
-            Streamline your coffee freeze-drying operations with real-time order tracking, machine management, and
-            client portal access.
+            We turn your coffee into shelf-stable instant packets, so you can sell online, in-shop, and wholesale without buying new equipment.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild size="lg" className="min-w-40">
+            <Button asChild size="lg" className="min-w-40 uppercase">
               <Link href="/auth/signup">
-                Get Started
+                Start a batch
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="min-w-40 bg-transparent text-white hover:text-white">
+            {/* <Button asChild size="lg" variant="outline" className="min-w-40 bg-transparent text-white hover:text-white">
               <Link href="/auth/login">Login</Link>
-            </Button>
+            </Button> */}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="border-t bg-background px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Package className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Order Management</h3>
-              <p className="text-muted-foreground">
-                Track orders from submission to completion with real-time status updates and detailed logs.
-              </p>
+  <div className="container mx-auto max-w-6xl">
+        <div className="grid gap-8 md:grid-cols-3">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Package className="h-8 w-8 text-primary" />
             </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Zap className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Machine Tracking</h3>
-              <p className="text-muted-foreground">
-                Monitor freeze-drying equipment status, capacity, and assignment to optimize your operations.
-              </p>
+            <h3 className="mb-2 text-xl font-semibold">Launch an Instant SKU</h3>
+            <p className="text-muted-foreground">
+              Turn your current roast into instant coffee your customers can take anywhere. Choose a batch, ship coffee,
+              and we handle the rest.
+        </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Zap className="h-8 w-8 text-primary" />
             </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Client Portal</h3>
-              <p className="text-muted-foreground">
-                Provide clients with secure access to view their orders and stay updated on progress.
-              </p>
+            <h3 className="mb-2 text-xl font-semibold">Your Brand, Not Ours</h3>
+            <p className="text-muted-foreground">
+              Sell it under your label with a simple approval flow. We keep production organized so you stay focused on
+              roasting and retail.
+        </p>
+          </div>
+
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Users className="h-8 w-8 text-primary" />
             </div>
+            <h3 className="mb-2 text-xl font-semibold">Sell Everywhere</h3>
+            <p className="text-muted-foreground">
+              Perfect for online orders, in-shop shelves, travel packs, and wholesale. Track your batch status and get
+              updates from intake to ship-out.
+        </p>
           </div>
         </div>
-      </section>
+      </div>
+</section>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 Coracle. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* Footer */ }
+  <footer className="border-t py-8">
+    <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <p>&copy; 2025 Coracle. All rights reserved.</p>
     </div>
+  </footer>
+    </div >
   )
 }

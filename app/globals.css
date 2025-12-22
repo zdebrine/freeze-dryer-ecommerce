@@ -95,6 +95,7 @@
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback';
   --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback';
+  --font-hero: 'Swell', 'Swell Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
