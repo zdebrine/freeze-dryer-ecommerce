@@ -63,14 +63,13 @@ export async function POST(request: NextRequest) {
       shippingAddress,
     })
 
-    // Update order with Shopify details
     await supabase
       .from("orders")
       .update({
         shopify_draft_order_id: shopifyResult.draftOrderId,
         shopify_checkout_url: shopifyResult.invoiceUrl,
+        unified_status: "ready_for_payment",
         order_stage: "payment_pending",
-        status: "completed",
         updated_at: new Date().toISOString(),
       })
       .eq("id", orderId)
@@ -82,7 +81,7 @@ export async function POST(request: NextRequest) {
       action: "Shopify checkout created",
       notes: `Draft order ID: ${shopifyResult.draftOrderId}`,
       previous_status: order.status,
-      new_status: "completed",
+      new_status: order.status,
     })
 
     // Send email to client with checkout link

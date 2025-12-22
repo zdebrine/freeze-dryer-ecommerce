@@ -7,12 +7,27 @@ import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
 import { TrackingNumberForm } from "@/components/client/tracking-number-form"
 
-const statusColors = {
-  pending: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  confirmed: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  in_progress: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  completed: "bg-green-500/10 text-green-600 border-green-500/20",
-  cancelled: "bg-red-500/10 text-red-600 border-red-500/20",
+const statusConfig = {
+  pending_confirmation: {
+    color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+    label: "Pending Confirmation",
+  },
+  awaiting_shipment: {
+    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    label: "Confirmed: Awaiting Shipment",
+  },
+  package_received: { color: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20", label: "Package Received" },
+  pre_freeze_prep: {
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+    label: "In Progress: Pre-Freeze Prep",
+  },
+  freeze_drying: {
+    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+    label: "In Progress: Freeze Drying",
+  },
+  final_packaging: { color: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20", label: "Final Packaging" },
+  ready_for_payment: { color: "bg-green-500/10 text-green-600 border-green-500/20", label: "Ready For Payment" },
+  completed: { color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", label: "Completed" },
 }
 
 export default async function ClientOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -46,8 +61,11 @@ export default async function ClientOrderDetailPage({ params }: { params: Promis
     .eq("order_id", id)
     .order("created_at", { ascending: false })
 
-  const needsTracking = order.order_stage === "awaiting_shipment" && !order.tracking_number
-  const needsPayment = order.order_stage === "payment_pending" && order.shopify_checkout_url
+  const needsTracking = order.unified_status === "awaiting_shipment" && !order.tracking_number
+  const needsPayment = order.unified_status === "ready_for_payment" && order.shopify_checkout_url
+
+  const currentStatus = order.unified_status || "pending_confirmation"
+  const statusInfo = statusConfig[currentStatus as keyof typeof statusConfig] || statusConfig.pending_confirmation
 
   return (
     <div className="space-y-6 p-8">
@@ -62,9 +80,7 @@ export default async function ClientOrderDetailPage({ params }: { params: Promis
 
       <div className="flex items-center gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{order.order_number}</h1>
-        <Badge className={statusColors[order.status as keyof typeof statusColors]}>
-          {order.status.replace("_", " ")}
-        </Badge>
+        <Badge className={statusInfo.color}>{statusInfo.label}</Badge>
       </div>
 
       {needsTracking && (
@@ -158,11 +174,11 @@ export default async function ClientOrderDetailPage({ params }: { params: Promis
                 )}
               </div>
             )}
-            {order.order_stage && (
+            {order.unified_status && (
               <div className="grid gap-2">
                 <p className="text-sm text-muted-foreground">Processing Stage</p>
                 <Badge variant="outline" className="w-fit capitalize">
-                  {order.order_stage.replace(/_/g, " ")}
+                  {order.unified_status.replace(/_/g, " ")}
                 </Badge>
               </div>
             )}

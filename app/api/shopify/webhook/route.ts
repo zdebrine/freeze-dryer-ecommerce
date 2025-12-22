@@ -39,13 +39,14 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (order) {
-        // Update order with payment confirmation
         await supabase
           .from("orders")
           .update({
             shopify_order_id: webhookData.id.toString(),
             payment_completed: true,
             payment_completed_at: new Date().toISOString(),
+            unified_status: "completed",
+            status: "completed",
             order_stage: "payment_completed",
             updated_at: new Date().toISOString(),
           })
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
           action: "Payment completed",
           notes: `Shopify Order ID: ${webhookData.id}`,
           previous_status: order.status,
-          new_status: order.status,
+          new_status: "completed",
         })
 
         // Send confirmation email
