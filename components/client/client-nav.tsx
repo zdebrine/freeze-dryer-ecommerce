@@ -28,7 +28,7 @@ export function ClientNav() {
         {/* Logo */}
         <Link href="/client" className="flex items-center gap-2">
           <Package className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">Coracle</span>
+          <span className="text-3xl font-hero text-primary">mernin'</span>
         </Link>
 
         {/* Navigation */}

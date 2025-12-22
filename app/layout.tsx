@@ -38,7 +38,7 @@ const swell = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "Coracle Coffee: Instant",
+  title: "mernin' Coffee: Instant",
   description: "Instant coffee processor",
   generator: "v0.app",
 }

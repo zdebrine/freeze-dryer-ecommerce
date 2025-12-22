@@ -152,7 +152,7 @@ export function OptimizedHeroVideo({
  *
  * <OptimizedHeroVideo
  *   posterSrc="/hero-poster.jpg"
- *   posterAlt="Coracle dashboard preview"
+ *   posterAlt="mernin' dashboard preview"
  *   webmSrc="/hero.webm"
  *   mp4Src="/hero.mp4"
  *   className="mt-10"
