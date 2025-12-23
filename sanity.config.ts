@@ -25,5 +25,6 @@ const config = defineConfig({
   ],
 })
 
-export { config }
+// Multiple export patterns for maximum compatibility
 export default config
+export { config }
