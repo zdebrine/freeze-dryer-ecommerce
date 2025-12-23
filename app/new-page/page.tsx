@@ -2,20 +2,15 @@ import Image from "next/image"
 import Link from "next/link"
 import { client } from "@/sanity/lib/client"
 import { HERO_QUERY, FEATURED_PRODUCTS_QUERY } from "@/sanity/lib/queries"
-import { getProduct } from "@/lib/shopify/storefront.ts"
+import { getProduct } from "@/lib/shopify/storefront"
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const [hero, featured] = await Promise.all([
-    client.fetch(HERO_QUERY),
-    client.fetch(FEATURED_PRODUCTS_QUERY),
-  ])
+  const [hero, featured] = await Promise.all([client.fetch(HERO_QUERY), client.fetch(FEATURED_PRODUCTS_QUERY)])
 
   const handles: string[] = featured?.productHandles ?? []
-  const products = (
-    await Promise.all(handles.map((h) => getProduct(h)))
-  ).filter(Boolean)
+  const products = (await Promise.all(handles.map((h) => getProduct(h)))).filter(Boolean)
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
@@ -26,10 +21,7 @@ export default async function HomePage() {
           <p className="mt-4 text-muted-foreground">{hero?.subtitle}</p>
 
           {hero?.buttonText && hero?.buttonLink && (
-            <Link
-              className="mt-6 inline-flex rounded-md bg-black px-4 py-2 text-white"
-              href={hero.buttonLink}
-            >
+            <Link className="mt-6 inline-flex rounded-md bg-black px-4 py-2 text-white" href={hero.buttonLink}>
               {hero.buttonText}
             </Link>
           )}
@@ -38,7 +30,7 @@ export default async function HomePage() {
         {hero?.imageUrl && (
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
             <Image
-              src={hero.imageUrl}
+              src={hero.imageUrl || "/placeholder.svg"}
               alt={hero?.title ?? "Hero image"}
               fill
               className="object-cover"
@@ -59,11 +51,7 @@ export default async function HomePage() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p: any) => (
-            <Link
-              key={p.id}
-              href={`/products/${p.handle}`}
-              className="rounded-xl border p-4 hover:shadow-sm"
-            >
+            <Link key={p.id} href={`/products/${p.handle}`} className="rounded-xl border p-4 hover:shadow-sm">
               <div className="relative aspect-square w-full overflow-hidden rounded-lg">
                 <Image
                   src={p.featuredImage?.url ?? hero.imageUrl}

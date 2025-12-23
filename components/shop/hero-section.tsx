@@ -5,7 +5,17 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { OptimizedHeroVideo } from "@/components/ui/OptimizedHeroVideo"
 
-export function HeroSection() {
+type HeroSectionProps = {
+  title?: string
+  subtitle?: string
+}
+
+export function HeroSection({ title, subtitle }: HeroSectionProps) {
+  const heroTitle = title || "Premium Instant Coffee Delivered Fresh"
+  const heroSubtitle =
+    subtitle ||
+    "Experience the rich, bold flavor of freshly brewed coffee in convenient instant form. Perfectly freeze-dried to preserve every note and aroma."
+
   return (
     <section className="relative flex h-screen items-center justify-center overflow-hidden">
       {/* Background Video */}
@@ -28,13 +38,9 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
         <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-white sm:text-6xl lg:text-7xl">
-          Premium Instant Coffee
-          <span className="text-white underline"> Delivered Fresh</span>
+          {heroTitle}
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
-          Experience the rich, bold flavor of freshly brewed coffee in convenient instant form. Perfectly freeze-dried
-          to preserve every note and aroma.
-        </p>
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">{heroSubtitle}</p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button asChild size="lg" className="min-w-40 uppercase">
             <Link href="/#products">
