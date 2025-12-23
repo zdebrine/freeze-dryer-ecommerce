@@ -5,10 +5,12 @@ import Link from "next/link"
 import { ShoppingCart } from "lucide-react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
+import { useCart } from "@/components/cart/cart-context"
 
 export function ShopHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
+  const { itemCount } = useCart()
 
   const isHomePage = pathname === "/"
 
@@ -69,11 +71,16 @@ export function ShopHeader() {
             asChild
             variant="ghost"
             size="icon"
-            className={shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}
+            className={`relative ${shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}`}
           >
-            <Link href="/auth/login">
+            <Link href="/cart">
               <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">Cart</span>
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  {itemCount}
+                </span>
+              )}
+              <span className="sr-only">Cart ({itemCount} items)</span>
             </Link>
           </Button>
           <Button
