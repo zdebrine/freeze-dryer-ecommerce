@@ -204,8 +204,43 @@ export async function getProducts(first = 12): Promise<ShopifyProduct[]> {
       }
     `
 
-    const data = await shopifyFetch<{ products: { edges: Array<{ node: ShopifyProduct }> } }>(query, { first })
-    return data.products.edges.map((edge) => edge.node)
+    const data = await shopifyFetch<{
+      products: {
+        edges: Array<{
+          node: {
+            id: string
+            title: string
+            handle: string
+            description: string
+            availableForSale: boolean
+            options: ProductOption[]
+            priceRange: {
+              minVariantPrice: Money
+            }
+            images: {
+              edges: Array<{ node: { url: string; altText: string | null } }>
+            }
+            variants: {
+              edges: Array<{
+                node: {
+                  id: string
+                  title: string
+                  availableForSale: boolean
+                  price: Money
+                  selectedOptions: SelectedOption[]
+                }
+              }>
+            }
+          }
+        }>
+      }
+    }>(query, { first })
+
+    // Flatten variants structure for all products
+    return data.products.edges.map((edge) => ({
+      ...edge.node,
+      variants: edge.node.variants.edges.map((v) => v.node),
+    }))
   } catch (error) {
     console.error("Failed to fetch products from Shopify:", error)
     return []
@@ -262,8 +297,43 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
       }
     `
 
-    const data = await shopifyFetch<{ productByHandle: ShopifyProduct | null }>(query, { handle })
-    return data.productByHandle
+    const data = await shopifyFetch<{
+      productByHandle: {
+        id: string
+        title: string
+        handle: string
+        description: string
+        availableForSale: boolean
+        options: ProductOption[]
+        priceRange: {
+          minVariantPrice: Money
+        }
+        images: {
+          edges: Array<{ node: { url: string; altText: string | null } }>
+        }
+        variants: {
+          edges: Array<{
+            node: {
+              id: string
+              title: string
+              availableForSale: boolean
+              price: Money
+              selectedOptions: SelectedOption[]
+            }
+          }>
+        }
+      } | null
+    }>(query, { handle })
+
+    if (!data.productByHandle) {
+      return null
+    }
+
+    const product = data.productByHandle
+    return {
+      ...product,
+      variants: product.variants.edges.map((edge) => edge.node),
+    }
   } catch (error) {
     console.error(`Failed to fetch product "${handle}" from Shopify:`, error)
     return null
