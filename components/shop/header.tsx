@@ -7,22 +7,45 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { useCart } from "@/components/cart/cart-context"
 
-export function ShopHeader() {
+type NavLink = {
+  label: string
+  href: string
+}
+
+type HeaderConfig = {
+  logoText?: string
+  navLinks?: NavLink[]
+  loginLabel?: string
+}
+
+function isExternalUrl(href: string) {
+  return /^https?:\/\//i.test(href)
+}
+
+export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
   const { itemCount } = useCart()
 
   const isHomePage = pathname === "/"
-
   const shouldUseTransparentHeader = isHomePage && !isScrolled
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const logoText = config?.logoText ?? "mernin'"
+  const navLinks: NavLink[] =
+    config?.navLinks?.length
+      ? config.navLinks
+      : [
+          { label: "Shop", href: "/#products" },
+          { label: "For Roasters", href: "/instant-processing" },
+          { label: "About", href: "/#about" },
+        ]
+  const loginLabel = config?.loginLabel ?? "Login"
 
   return (
     <header
@@ -35,37 +58,34 @@ export function ShopHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <span
-            className={`text-3xl font-hero transition-colors ${shouldUseTransparentHeader ? "text-white" : "text-primary"}`}
+            className={`text-3xl font-hero transition-colors ${
+              shouldUseTransparentHeader ? "text-white" : "text-primary"
+            }`}
           >
-            mernin'
+            {logoText}
           </span>
         </Link>
+
         <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href="/#products"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
-            }`}
-          >
-            Shop
-          </Link>
-          <Link
-            href="/instant-processing"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
-            }`}
-          >
-            For Roasters
-          </Link>
-          <Link
-            href="/#about"
-            className={`text-sm font-medium transition-colors hover:text-primary ${
-              shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
-            }`}
-          >
-            About
-          </Link>
+          {navLinks.map((l, idx) => {
+            const linkProps = isExternalUrl(l.href)
+              ? { href: l.href, target: "_blank", rel: "noreferrer" }
+              : { href: l.href }
+
+            return (
+              <Link
+                key={`${l.label}-${l.href}-${idx}`}
+                {...(linkProps as any)}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
+                }`}
+              >
+                {l.label}
+              </Link>
+            )
+          })}
         </nav>
+
         <div className="flex items-center gap-4">
           <Button
             asChild
@@ -83,12 +103,13 @@ export function ShopHeader() {
               <span className="sr-only">Cart ({itemCount} items)</span>
             </Link>
           </Button>
+
           <Button
             asChild
             variant="ghost"
             className={shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}
           >
-            <Link href="/auth/login">Login</Link>
+            <Link href="/auth/login">{loginLabel}</Link>
           </Button>
         </div>
       </div>

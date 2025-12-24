@@ -150,50 +150,57 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
   return json.data
 }
 
-export async function getProducts(first = 12): Promise<ShopifyProduct[]> {
+export async function getProducts(
+  first = 12,
+  collectionHandle?: string,
+): Promise<ShopifyProduct[]> {
   try {
-    const query = `
-      query GetProducts($first: Int!) {
-        products(first: $first) {
-          edges {
-            node {
-              id
-              title
-              handle
-              description
-              availableForSale
-              options {
-                id
-                name
-                values
-              }
-              priceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
-              images(first: 1) {
-                edges {
-                  node {
-                    url
-                    altText
-                  }
-                }
-              }
-              variants(first: 10) {
-                edges {
-                  node {
+    const query = collectionHandle
+      ? `
+        query GetProductsByCollection($first: Int!, $handle: String!) {
+          collectionByHandle(handle: $handle) {
+            products(first: $first) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  description
+                  availableForSale
+                  options {
                     id
-                    title
-                    availableForSale
-                    price {
+                    name
+                    values
+                  }
+                  priceRange {
+                    minVariantPrice {
                       amount
                       currencyCode
                     }
-                    selectedOptions {
-                      name
-                      value
+                  }
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                  variants(first: 10) {
+                    edges {
+                      node {
+                        id
+                        title
+                        availableForSale
+                        price {
+                          amount
+                          currencyCode
+                        }
+                        selectedOptions {
+                          name
+                          value
+                        }
+                      }
                     }
                   }
                 }
@@ -201,51 +208,92 @@ export async function getProducts(first = 12): Promise<ShopifyProduct[]> {
             }
           }
         }
-      }
-    `
-
-    const data = await shopifyFetch<{
-      products: {
-        edges: Array<{
-          node: {
-            id: string
-            title: string
-            handle: string
-            description: string
-            availableForSale: boolean
-            options: ProductOption[]
-            priceRange: {
-              minVariantPrice: Money
-            }
-            images: {
-              edges: Array<{ node: { url: string; altText: string | null } }>
-            }
-            variants: {
-              edges: Array<{
-                node: {
-                  id: string
-                  title: string
-                  availableForSale: boolean
-                  price: Money
-                  selectedOptions: SelectedOption[]
+      `
+      : `
+        query GetProducts($first: Int!) {
+          products(first: $first) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                availableForSale
+                options {
+                  id
+                  name
+                  values
                 }
-              }>
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 1) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      availableForSale
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
-        }>
-      }
-    }>(query, { first })
+        }
+      `
 
-    // Flatten variants structure for all products
-    return data.products.edges.map((edge) => ({
+    const variables = collectionHandle ? { first, handle: collectionHandle } : { first }
+
+    const data = await shopifyFetch<
+      collectionHandle extends string
+        ? {
+            collectionByHandle: {
+              products: {
+                edges: Array<{ node: ShopifyProduct & { variants: { edges: any[] } } }>
+              }
+            } | null
+          }
+        : {
+            products: {
+              edges: Array<{ node: ShopifyProduct & { variants: { edges: any[] } } }>
+            }
+          }
+    >(query, variables)
+
+    const edges =
+      collectionHandle
+        ? (data as any).collectionByHandle?.products?.edges ?? []
+        : (data as any).products?.edges ?? []
+
+    return edges.map((edge: any) => ({
       ...edge.node,
-      variants: edge.node.variants.edges.map((v) => v.node),
+      variants: edge.node.variants.edges.map((v: any) => v.node),
     }))
   } catch (error) {
     console.error("Failed to fetch products from Shopify:", error)
     return []
   }
 }
+
 
 export async function getProduct(handle: string): Promise<ShopifyProduct | null> {
   try {

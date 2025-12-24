@@ -5,24 +5,6 @@ export default defineType({
   title: "Landing Page",
   type: "document",
   fields: [
-    // THEME
-    defineField({
-      name: "theme",
-      title: "Theme",
-      type: "object",
-      fields: [
-        defineField({ name: "background", title: "Background", type: "string", description: "Hex like #0b0b0b" }),
-        defineField({ name: "foreground", title: "Foreground", type: "string", description: "Hex like #ffffff" }),
-        defineField({ name: "primary", title: "Primary", type: "string", description: "Hex like #f59e0b" }),
-        defineField({
-          name: "primaryForeground",
-          title: "Primary Foreground",
-          type: "string",
-          description: "Hex like #0b0b0b",
-        }),
-      ],
-    }),
-
     // HEADER
     defineField({
       name: "header",
@@ -52,28 +34,6 @@ export default defineType({
           title: "Login Button Label",
           type: "string",
           initialValue: "Login",
-        }),
-
-        defineField({
-          name: "transparentHeader",
-          title: "Transparent Header Style (Home, top of page)",
-          type: "object",
-          fields: [
-            defineField({ name: "textColor", title: "Text Color", type: "string", description: "Hex" }),
-            defineField({ name: "borderColor", title: "Border Color", type: "string", description: "Hex" }),
-            defineField({ name: "backgroundColor", title: "Background Color", type: "string", description: "Hex" }),
-          ],
-        }),
-
-        defineField({
-          name: "scrolledHeader",
-          title: "Scrolled Header Style",
-          type: "object",
-          fields: [
-            defineField({ name: "textColor", title: "Text Color", type: "string", description: "Hex" }),
-            defineField({ name: "borderColor", title: "Border Color", type: "string", description: "Hex" }),
-            defineField({ name: "backgroundColor", title: "Background Color", type: "string", description: "Hex" }),
-          ],
         }),
       ],
     }),
@@ -136,13 +96,7 @@ export default defineType({
           hidden: ({ parent }) => parent?.backgroundType !== "image",
         }),
 
-        // Overlay
-        defineField({
-          name: "overlayColor",
-          title: "Overlay Color",
-          type: "string",
-          description: "Hex like #000000",
-        }),
+        // Overlay (keep opacity, but no color controls; assume black in CSS)
         defineField({
           name: "overlayOpacity",
           title: "Overlay Opacity",
@@ -214,12 +168,6 @@ export default defineType({
           initialValue: 8,
           validation: (r) => r.min(1).max(24),
         }),
-        defineField({
-          name: "backgroundColor",
-          title: "Background Color",
-          type: "string",
-          description: "Hex (optional). If empty, uses site default.",
-        }),
       ],
     }),
 
@@ -261,12 +209,6 @@ export default defineType({
           title: "Subtitle",
           type: "string",
           initialValue: "Don’t just take our word for it",
-        }),
-        defineField({
-          name: "backgroundColor",
-          title: "Background Color",
-          type: "string",
-          description: "Hex (optional).",
         }),
         defineField({
           name: "testimonials",
