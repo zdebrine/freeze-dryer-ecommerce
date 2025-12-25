@@ -62,7 +62,7 @@ export function ProductClient({ product }: ProductClientProps) {
           <Badge variant="secondary" className="mb-4">
             Instant Coffee
           </Badge>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{product.title}</h1>
+          <h1 className="text-4xl font-bold tracking-wide uppercase sm:text-5xl font-calsans">{product.title}</h1>
         </div>
 
         <div className="flex items-baseline gap-2">

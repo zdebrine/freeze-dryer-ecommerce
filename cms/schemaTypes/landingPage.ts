@@ -144,6 +144,7 @@ export default defineType({
           ],
           validation: (r) => r.min(0).max(4),
         }),
+       
       ],
     }),
 
@@ -155,6 +156,7 @@ export default defineType({
       fields: [
         defineField({ name: "anchorId", title: "Anchor ID", type: "string", initialValue: "products" }),
         defineField({ name: "title", title: "Title", type: "string", initialValue: "Our Coffee" }),
+        defineField({ name: "collection", title: "Collection Handle", type: "string", initialValue: "all" }),
         defineField({
           name: "subtitle",
           title: "Subtitle",
@@ -218,6 +220,14 @@ export default defineType({
           validation: (r) => r.min(0).max(24),
         }),
       ],
+    }),
+
+    //CTA BOX
+
+    defineField({
+      name: "ctaBox",
+      title: "CTA Box",
+      type: "ctaBox",
     }),
 
     // FOOTER

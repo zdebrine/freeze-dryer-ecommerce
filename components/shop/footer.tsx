@@ -8,8 +8,7 @@ export function ShopFooter() {
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Package className="h-6 w-6 text-primary" />
-              <span className="text-xl">mernin'</span>
+              <span className="text-4xl font-hero text-primary">mernin'</span>
             </div>
             <p className="text-sm text-muted-foreground">Premium instant coffee, freeze-dried to perfection.</p>
           </div>
