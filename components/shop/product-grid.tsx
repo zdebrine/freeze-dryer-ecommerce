@@ -1,69 +1,111 @@
+// components/shop/ProductGrid.tsx
 import Image from "next/image"
 import Link from "next/link"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Package } from "lucide-react"
+import { Card } from "@/components/ui/card"
+import { Eye, Star } from "lucide-react"
 import type { ShopifyProduct } from "@/lib/shopify/storefront"
 
 type ProductGridProps = {
   products: ShopifyProduct[]
 }
 
+function StarRating({ rating, count }: { rating: number; count: number }) {
+  // simple 0–5 display (no half stars)
+  const filled = Math.max(0, Math.min(5, Math.round(rating)))
+  return (
+    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star
+            key={i}
+            className="h-3.5 w-3.5"
+            fill={i < filled ? "currentColor" : "none"}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+      <span>({count} reviews)</span>
+    </div>
+  )
+}
+
 export function ProductGrid({ products }: ProductGridProps) {
   if (!products || products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="flex flex-col items-center gap-4">
-          <Package className="h-16 w-16 text-muted-foreground/50" />
-          <div>
-            <p className="text-lg font-semibold text-muted-foreground mb-2">No products available</p>
-            <p className="text-sm text-muted-foreground">
-              Shopify integration is not configured yet. Please check your environment variables.
-            </p>
-          </div>
-        </div>
+      <div className="py-12 text-center text-sm text-muted-foreground">
+        No products available. Check your Shopify env vars / storefront connection.
       </div>
     )
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product) => {
         const image = product.images.edges[0]?.node
         const price = product.priceRange.minVariantPrice
 
+        // Optional: if you add ratings via metafields or an app, map them here.
+        const rating = (product as any).rating as number | undefined
+        const reviewCount = (product as any).reviewCount as number | undefined
+
         return (
-          <Card key={product.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
-            <Link href={`/products/${product.handle}`}>
-              <CardContent className="p-0">
-                <div className="relative aspect-square overflow-hidden bg-muted">
-                  {image ? (
-                    <Image
-                      src={image.url || "/placeholder.svg"}
-                      alt={image.altText || product.title}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <span className="text-muted-foreground">No image</span>
-                    </div>
-                  )}
+          <Card
+            key={product.id}
+            className="group border-0 bg-transparent shadow-none"
+          >
+            <div className="relative">
+              {/* Main clickable area */}
+              <Link href={`/products/${product.handle}`} className="block">
+                {/* Big image stage with whitespace + object-contain */}
+                <div className="relative aspect-square overflow-hidden bg-muted/15">
+                  <div className="flex h-full w-full items-center justify-center">
+                    {image ? (
+                      <Image
+                        src={image.url || "/placeholder.svg"}
+                        alt={image.altText || product.title}
+                        width={1200}
+                        height={1200}
+                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        priority={false}
+                      />
+                    ) : (
+                      <div className="text-sm text-muted-foreground">No image</div>
+                    )}
+                  </div>
+
+                  {/* If you want a discount badge like the screenshot:
+                      add compareAtPrice to your Shopify query, compute % off, and render a badge here. */}
                 </div>
-              </CardContent>
-              <CardFooter className="flex flex-col items-start gap-2 p-4">
-                <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
-                  {product.title}
-                </h3>
-                <p className="text-lg font-bold">
-                  ${Number.parseFloat(price.amount).toFixed(2)} {price.currencyCode}
-                </p>
-                <Button className="w-full mt-2" size="sm">
-                  View Product
-                </Button>
-              </CardFooter>
-            </Link>
+
+                {/* Text block under the image */}
+                <div className="pt-4">
+                  {typeof rating === "number" && typeof reviewCount === "number" ? (
+                    <StarRating rating={rating} count={reviewCount} />
+                  ) : null}
+
+                  <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">
+                    {product.title}
+                  </h3>
+
+                  <p className="mt-1 text-sm font-medium">
+                    ${Number.parseFloat(price.amount).toFixed(2)}
+                  </p>
+                </div>
+              </Link>
+
+              {/* Floating quick-action icons (separate from the main Link to avoid nested interactive elements) */}
+              <div className="pointer-events-none absolute bottom-4 right-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                <Link
+                  href={`/products/${product.handle}`}
+                  aria-label="Quick view"
+                  className="pointer-events-auto inline-flex h-9 w-9 items-center justify-center rounded-full bg-background/90 shadow-sm ring-1 ring-border backdrop-blur hover:bg-background"
+                >
+                  <Eye className="h-4 w-4" />
+                </Link>
+                {/* Add-to-cart icon could go here later (client action). Keeping one icon for now. */}
+              </div>
+            </div>
           </Card>
         )
       })}

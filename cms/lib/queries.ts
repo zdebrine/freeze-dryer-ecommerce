@@ -30,6 +30,14 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
       backgroundColor,
       testimonials
     },
+    ctaBox{
+      ctaText,
+      ctaSubText,
+      ctaButtonLabel,
+      ctaLink,
+      ctaImageAlt,
+      "ctaImage": ctaImage.asset->url
+    },
     footer
   }`
   

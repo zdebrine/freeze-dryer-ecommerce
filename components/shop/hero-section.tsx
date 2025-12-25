@@ -33,7 +33,7 @@ function isExternalUrl(href: string) {
 }
 
 export function HeroSection({ config }: { config?: HeroConfig }) {
-  console.log(config)
+
   const backgroundType = config?.backgroundType ?? "video"
 
   const mp4Src =
@@ -139,8 +139,8 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
                   variant={variant as any}
                   className={
                     variant === "outline"
-                      ? "min-w-40 bg-white/10 text-white hover:bg-white/20 border-white/20"
-                      : "min-w-40 uppercase"
+                      ? "min-w-70 text-lg font-calsans bg-white/10 text-white hover:bg-white/20 border-white/20"
+                      : "min-w-70 text-lg font-calsans uppercase"
                   }
                 >
                   <Link {...(linkProps as any)}>

@@ -38,11 +38,10 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="bg-muted/30 px-4 py-20">
+    <section className="bg-primary px-4 py-20">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">What Our Customers Say</h2>
-          <p className="mt-4 text-lg text-muted-foreground">Don&apos;t just take our word for it</p>
+          <h2 className="text-4xl font-bold tracking-wide sm:text-5xl font-calsans uppercase text-secondary">Word on the street</h2>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {testimonials.map((testimonial) => (

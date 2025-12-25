@@ -39,6 +39,13 @@ const swell = localFont({
   display: "swap",
 })
 
+// Local font (Swell)
+const calsans = localFont({
+  src: "./fonts/CalSans-Regular.ttf",
+  variable: "--font-calsans",
+  display: "swap",
+})
+
 export const metadata: Metadata = {
   title: "mernin' Coffee: Instant",
   description: "Instant coffee processor",
