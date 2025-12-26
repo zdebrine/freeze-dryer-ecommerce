@@ -38,11 +38,11 @@ export function HowItWorks({ config }: { config?: HowItWorksConfig }) {
     <section className="bg-background px-4 py-20">
       <div className="container mx-auto max-w-6xl">
         <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">{title}</h2>
+          <h2 className="text-4xl font-bold font-calsans uppercase sm:text-5xl">{title}</h2>
           <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => {
             const IconComponent = getIconComponent(step.icon)
             return (
@@ -51,7 +51,7 @@ export function HowItWorks({ config }: { config?: HowItWorksConfig }) {
                   <IconComponent className="h-8 w-8 text-primary" />
                 </div>
                 <div className="mb-2 text-sm font-semibold text-primary">Step {step.stepNumber}</div>
-                <h3 className="mb-2 text-xl font-semibold">{step.title}</h3>
+                <h3 className="mb-2 text-xl font-calsans uppercase font-semibold">{step.title}</h3>
                 <p className="text-muted-foreground">{step.description}</p>
               </div>
             )

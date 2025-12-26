@@ -46,7 +46,7 @@ export function LogoMarquee({ config }: { config?: LogoMarqueeConfig }) {
   const duplicatedLogos = [...logos, ...logos]
 
   return (
-    <section className="border-y bg-muted/30 py-12">
+    <section className="py-12">
       <div className="overflow-hidden">
         <div ref={scrollRef} className="flex gap-12 overflow-x-hidden" style={{ scrollBehavior: "auto" }}>
           {duplicatedLogos.map((logo, idx) => (

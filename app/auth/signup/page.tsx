@@ -69,7 +69,14 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-background">
+    <div className="flex min-h-svh w-full flex-col gap-4 items-center justify-center p-6 md:p-10 bg-background">
+         <Link href="/" >
+        <span
+          className={`text-5xl font-hero text-primary`}
+        >
+          mernin'
+        </span>
+      </Link>
       <div className="w-full max-w-md">
         <Card>
           <CardHeader className="space-y-2">
