@@ -109,7 +109,6 @@ export function OptimizedHeroVideo({
                 className
             )}
         >
-            {/* Poster always renders. It's the visual fallback and your LCP-friendly asset. */}
             <Image
                 src={posterSrc}
                 alt={posterAlt}
@@ -118,8 +117,6 @@ export function OptimizedHeroVideo({
                 className={cn("object-cover", fill ? "object-cover" : "object-contain")}
                 sizes="(max-width: 768px) 100vw, 960px"
             />
-
-            {/* Video overlays the poster when allowed. Poster remains underneath for seamless fallback. */}
             {showVideoEl ? (
                 <video
                     ref={videoRef}
@@ -141,20 +138,7 @@ export function OptimizedHeroVideo({
                 </video>
             ) : null}
 
-            {/* Optional overlay content (labels, gradients, CTA, etc.) */}
             {children ? <div className="absolute inset-0">{children}</div> : null}
         </div>
     )
 }
-
-/**
- * Example usage:
- *
- * <OptimizedHeroVideo
- *   posterSrc="/hero-poster.jpg"
- *   posterAlt="mernin' dashboard preview"
- *   webmSrc="/hero.webm"
- *   mp4Src="/hero.mp4"
- *   className="mt-10"
- * />
- */
