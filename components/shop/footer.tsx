@@ -1,83 +1,104 @@
-import Link from "next/link"
-import { Package } from "lucide-react"
+"use client"
 
-export function ShopFooter() {
+import Link from "next/link"
+
+type NavLink = {
+  label: string
+  href: string
+}
+
+type FooterColumn = {
+  title: string
+  links?: NavLink[]
+}
+
+type FooterConfig = {
+  logoText?: string
+  tagline?: string
+  columns?: FooterColumn[]
+  copyrightText?: string
+}
+
+function isExternalUrl(href: string) {
+  return /^https?:\/\//i.test(href)
+}
+
+export function ShopFooter({ config }: { config?: FooterConfig }) {
+  const logoText = config?.logoText ?? "mernin'"
+  const tagline = config?.tagline ?? "Premium instant coffee, freeze-dried to perfection."
+  const columns =
+    config?.columns?.length
+      ? config.columns
+      : [
+          {
+            title: "Shop",
+            links: [
+              { label: "All Products", href: "/#products" },
+              { label: "Best Sellers", href: "/#products" },
+              { label: "New Arrivals", href: "/#products" },
+            ],
+          },
+          {
+            title: "Company",
+            links: [
+              { label: "For Roasters", href: "/instant-processing" },
+              { label: "About Us", href: "/#about" },
+              { label: "Portal Login", href: "/auth/login" },
+            ],
+          },
+          {
+            title: "Support",
+            links: [
+              { label: "Contact Us", href: "#" },
+              { label: "Shipping Info", href: "#" },
+              { label: "Returns", href: "#" },
+            ],
+          },
+        ]
+
+  const copyrightText = config?.copyrightText ?? "© 2025 mernin'. All rights reserved."
+
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-8 md:grid-cols-4">
+          {/* Brand column */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-4xl font-hero text-primary">mernin'</span>
+              <span className="text-4xl font-hero text-primary">{logoText}</span>
             </div>
-            <p className="text-sm text-muted-foreground">Premium instant coffee, freeze-dried to perfection.</p>
+            {tagline ? <p className="text-sm text-muted-foreground">{tagline}</p> : null}
           </div>
-          <div>
-            <h4 className="mb-4 font-semibold">Shop</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/#products" className="text-muted-foreground hover:text-foreground transition-colors">
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/#products" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Best Sellers
-                </Link>
-              </li>
-              <li>
-                <Link href="/#products" className="text-muted-foreground hover:text-foreground transition-colors">
-                  New Arrivals
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="mb-4 font-semibold">Company</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/instant-processing"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  For Roasters
-                </Link>
-              </li>
-              <li>
-                <Link href="/#about" className="text-muted-foreground hover:text-foreground transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/auth/login" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Portal Login
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="mb-4 font-semibold">Support</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Returns
-                </Link>
-              </li>
-            </ul>
-          </div>
+
+          {/* Link columns */}
+          {columns.map((col, idx) => (
+            <div key={`${col.title}-${idx}`}>
+              <h4 className="mb-4 font-semibold">{col.title}</h4>
+
+              <ul className="space-y-2 text-sm">
+                {(col.links ?? []).map((l, jdx) => {
+                  const linkProps = isExternalUrl(l.href)
+                    ? { href: l.href, target: "_blank", rel: "noreferrer" }
+                    : { href: l.href }
+
+                  return (
+                    <li key={`${l.label}-${l.href}-${jdx}`}>
+                      <Link
+                        {...(linkProps as any)}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
         </div>
+
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 mernin'. All rights reserved.</p>
+          <p>{copyrightText}</p>
         </div>
       </div>
     </footer>

@@ -56,8 +56,8 @@ export default async function HomePage() {
       {/* Product Grid */}
       <section id={productsAnchorId} className="border-t bg-background px-4 pt-10 md:pt-20">
         <div className="mx-auto">
-          <div className="mb-4 md:mb-12 text-center">
-            <h2 className="text-2xl md:text-4xl font-bold tracking-wide sm:text-5xl md:text-7xl font-calsans uppercase">{productsTitle}</h2>
+          <div className="mb-4 md:mb-12 text-center md:px-16">
+            <h2 className="text-5xl font-extrabold tracking-tight md:text-8xl font-calsans uppercase">{productsTitle}</h2>
             {/* <p className="mt-4 text-lg text-muted-foreground">{productsSubtitle}</p> */}
           </div>
 
