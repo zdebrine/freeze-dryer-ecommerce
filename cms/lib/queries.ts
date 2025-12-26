@@ -40,4 +40,3 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
     },
     footer
   }`
-  
