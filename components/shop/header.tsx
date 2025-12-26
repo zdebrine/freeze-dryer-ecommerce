@@ -51,7 +51,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         shouldUseTransparentHeader
-          ? "bg-transparent border-b border-white/10"
+          ? "bg-transparent border-b border-secondary/10"
           : "bg-background/95 backdrop-blur-sm border-b"
       }`}
     >
@@ -59,7 +59,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
         <Link href="/" className="flex items-center gap-2">
           <span
             className={`text-3xl font-hero transition-colors ${
-              shouldUseTransparentHeader ? "text-white" : "text-primary"
+              shouldUseTransparentHeader ? "text-secondary" : "text-primary"
             }`}
           >
             {logoText}
@@ -77,7 +77,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
                 key={`${l.label}-${l.href}-${idx}`}
                 {...(linkProps as any)}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  shouldUseTransparentHeader ? "text-white hover:text-white/80" : "text-foreground"
+                  shouldUseTransparentHeader ? "text-secondary hover:text-secondary/80" : "text-foreground"
                 }`}
               >
                 {l.label}
@@ -91,7 +91,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
             asChild
             variant="ghost"
             size="icon"
-            className={`relative ${shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}`}
+            className={`relative ${shouldUseTransparentHeader ? "text-secondary hover:text-secondary hover:bg-secondary/10" : ""}`}
           >
             <Link href="/cart">
               <ShoppingCart className="h-5 w-5" />
@@ -107,7 +107,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
           <Button
             asChild
             variant="ghost"
-            className={shouldUseTransparentHeader ? "text-white hover:text-white hover:bg-white/10" : ""}
+            className={shouldUseTransparentHeader ? "text-secondary hover:text-secondary hover:bg-secondary/10" : ""}
           >
             <Link href="/auth/login">{loginLabel}</Link>
           </Button>

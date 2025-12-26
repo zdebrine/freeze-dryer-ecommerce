@@ -39,7 +39,7 @@ export function Cta({ config }: { config?: CtaConfig }) {
           <div className="relative grid grid-cols-1 md:grid-cols-2">
             {/* left: copy + button */}
             <div className="flex flex-col items-center justify-center px-6 py-12 text-center md:px-12 md:py-16">
-              <h2 className="text-balance font-calsans text-4xl tracking-tight text-secondary drop-shadow-sm sm:text-5xl lg:text-6xl">
+              <h2 className="text-balance font-calsans font-bold text-4xl tracking-tight text-secondary drop-shadow-sm sm:text-5xl lg:text-5xl uppercase">
                 {headline}
               </h2>
 
