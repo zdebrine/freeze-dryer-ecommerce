@@ -40,3 +40,46 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
     },
     footer
   }`
+
+export const INSTANT_PROCESSING_QUERY = `*[_type == "instantProcessing"][0]{
+  hero {
+    "videoMp4": videoMp4Url,
+    "videoWebm": videoWebmUrl,
+    "posterUrl": posterImage.asset->url,
+    overlayOpacity,
+    headline,
+    subheadline,
+    ctaLabel,
+    ctaLink
+  },
+  aboutSection,
+  logoMarquee {
+    logos[] {
+      "url": asset->url,
+      alt
+    }
+  },
+  imageBanner {
+    "imageUrl": image.asset->url,
+    overlayText,
+    textPosition
+  },
+  howItWorks {
+    title,
+    subtitle,
+    steps[] {
+      stepNumber,
+      title,
+      description,
+      icon
+    }
+  },
+  ctaSection {
+    ctaText,
+    ctaSubText,
+    ctaButtonLabel,
+    ctaLink,
+    ctaImageAlt,
+    "ctaImage": ctaImage.asset->url
+  }
+}`

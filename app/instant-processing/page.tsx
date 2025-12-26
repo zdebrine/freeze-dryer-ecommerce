@@ -1,78 +1,71 @@
-"use client"
-
+import { client } from "@/cms/lib/client"
+import { INSTANT_PROCESSING_QUERY, LANDING_PAGE_QUERY } from "@/cms/lib/queries"
+import { ShopHeader } from "@/components/shop/header"
+import { ShopFooter } from "@/components/shop/footer"
+import { Cta } from "@/components/shop/cta"
+import { OptimizedHeroVideo } from "@/components/ui/OptimizedHeroVideo"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, Package, Users, Zap } from "lucide-react"
-import { OptimizedHeroVideo } from "@/components/ui/OptimizedHeroVideo"
-import { useState, useEffect } from "react"
+import { ArrowRight } from "lucide-react"
+import { LogoMarquee } from "@/components/instant-processing/logo-marquee"
+import { ImageBanner } from "@/components/instant-processing/image-banner"
+import { HowItWorks } from "@/components/instant-processing/how-it-works"
 
-export default function InstantProcessingPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
+export const revalidate = 60
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+export default async function InstantProcessingPage() {
+  // Fetch landing page data for header/footer
+  const landing = await client.fetch(LANDING_PAGE_QUERY)
+
+  // Fetch instant processing page data
+  const instantProcessing = await client.fetch(INSTANT_PROCESSING_QUERY)
+
+  const hero = instantProcessing?.hero
+  const aboutSection = instantProcessing?.aboutSection
+  const logoMarquee = instantProcessing?.logoMarquee
+  const imageBanner = instantProcessing?.imageBanner
+  const howItWorks = instantProcessing?.howItWorks
+  const ctaSection = instantProcessing?.ctaSection
+
+  // Hero defaults
+  const mp4Src = hero?.videoMp4 || process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL
+  const webmSrc = hero?.videoWebm || process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL
+  const posterSrc = hero?.posterUrl || "/hero.png"
+  const overlayOpacity = typeof hero?.overlayOpacity === "number" ? hero.overlayOpacity : 0.6
+  const headline = hero?.headline || "Launch your own Instant Coffee line"
+  const subheadline =
+    hero?.subheadline ||
+    "We turn your coffee into shelf-stable instant packets, so you can sell online, in-shop, and wholesale without buying new equipment."
+  const ctaLabel = hero?.ctaLabel || "Start a Batch"
+  const ctaLink = hero?.ctaLink || "/auth/signup"
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background border-b" : "bg-transparent border-b border-white/10"
-        }`}
-      >
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            {/* <Package className={`h-6 w-6 transition-colors ${isScrolled ? "text-primary" : "text-white"}`} /> */}
-            <span className={`text-xl font-hero transition-colors ${isScrolled ? "text-primary" : "text-white"}`}>mernin'</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button
-              asChild
-              variant={isScrolled ? "ghost" : "ghost"}
-              className={isScrolled ? "" : "text-white hover:text-white hover:bg-white/10"}
-            >
-              <Link href="/auth/login">Login</Link>
-            </Button>
-            <Button asChild className={isScrolled ? "" : "bg-white text-black hover:bg-white/90"}>
-              <Link href="/auth/signup">Sign Up</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <ShopHeader config={landing?.header} />
 
-      {/* Hero Section (Full-screen background video) */}
-      <section className="relative flex h-screen items-center justify-center overflow-hidden">
+      <section className="relative flex h-[70vh] items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <OptimizedHeroVideo
-            posterSrc="/hero.png"
-            posterAlt="mernin' dashboard preview"
-            webmSrc={process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL}
-            mp4Src={process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL}
+            posterSrc={posterSrc}
+            posterAlt="Instant processing hero"
+            webmSrc={webmSrc}
+            mp4Src={mp4Src}
             priorityPoster
             className="h-full w-full border-0 rounded-none"
             fill
             useAspectRatio={false}
           />
         </div>
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
         <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
           <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-white sm:text-6xl lg:text-7xl">
-            Launch your own
-            <span className="text-white underline"> Instant Coffee line</span>
+            {headline}
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
-            We turn your coffee into shelf-stable instant packets, so you can sell online, in-shop, and wholesale
-            without buying new equipment.
-          </p>
+          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">{subheadline}</p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild size="lg" className="min-w-40 uppercase">
-              <Link href="/auth/signup">
-                Start a Batch
+              <Link href={ctaLink}>
+                {ctaLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -80,50 +73,25 @@ export default function InstantProcessingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="border-t bg-background px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-3">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Package className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Launch an Instant SKU</h3>
-              <p className="text-muted-foreground">
-                Turn your current roast into instant coffee your customers can take anywhere. Choose a batch, ship
-                coffee, and we handle the rest.
-              </p>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Zap className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Your Brand, Not Ours</h3>
-              <p className="text-muted-foreground">
-                Sell it under your label with a simple approval flow. We keep production organized so you stay focused
-                on roasting and retail.
-              </p>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Sell Everywhere</h3>
-              <p className="text-muted-foreground">
-                Perfect for online orders, in-shop shelves, travel packs, and wholesale. Track your batch status and get
-                updates from intake to ship-out.
-              </p>
-            </div>
-          </div>
+      <section className="bg-background px-4 py-20">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">{aboutSection?.title || "What We're About"}</h2>
+          <p className="mt-6 text-lg text-muted-foreground">
+            {aboutSection?.description ||
+              "We're here to help coffee roasters expand their product lines with premium freeze-dried instant coffee. No equipment needed, just your great coffee and our expertise."}
+          </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 mernin'. All rights reserved.</p>
-        </div>
-      </footer>
+      <LogoMarquee config={logoMarquee} />
+
+      <ImageBanner config={imageBanner} />
+
+      <HowItWorks config={howItWorks} />
+
+      <Cta config={ctaSection} />
+
+      <ShopFooter config={landing?.footer} />
     </div>
   )
 }
