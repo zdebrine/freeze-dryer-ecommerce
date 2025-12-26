@@ -1,4 +1,3 @@
-"use client"
 /**
  * Sanity Studio config mounted at /app/studio/[[...tool]]/page.tsx
  */
@@ -16,8 +15,5 @@ export default defineConfig({
   projectId,
   dataset,
   schema,
-  plugins: [
-    structureTool({ structure }),
-    visionTool({ defaultApiVersion: apiVersion }),
-  ],
+  plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
 })
