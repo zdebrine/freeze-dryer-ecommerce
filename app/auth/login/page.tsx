@@ -36,7 +36,7 @@ export default function LoginPage() {
       const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).single()
 
       // Redirect based on role
-      if (profile?.role === "admin") {
+      if (profile ?.role === "admin") {
         router.push("/admin")
       } else {
         router.push("/client")
@@ -49,7 +49,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-background">
+    <div className="flex min-h-svh w-full flex-col gap-4 items-center justify-center p-6 md:p-10 bg-background">
+      <Link href="/" >
+        <span
+          className={`text-5xl font-hero text-primary`}
+        >
+          mernin'
+        </span>
+      </Link>
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="space-y-2">

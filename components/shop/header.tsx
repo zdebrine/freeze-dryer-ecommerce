@@ -27,7 +27,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const pathname = usePathname()
   const { itemCount } = useCart()
 
-  const isHomePage = pathname === "/"
+  const isHomePage = pathname === "/" || pathname === "/instant-processing"
   const shouldUseTransparentHeader = isHomePage && !isScrolled
 
   useEffect(() => {

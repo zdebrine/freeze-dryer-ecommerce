@@ -43,7 +43,7 @@ export default async function InstantProcessingPage() {
     <div className="flex min-h-screen flex-col">
       <ShopHeader config={landing?.header} />
 
-      <section className="relative flex h-[70vh] items-center justify-center overflow-hidden">
+      <section className="relative flex h-[80vh] items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <OptimizedHeroVideo
             posterSrc={posterSrc}
@@ -58,7 +58,7 @@ export default async function InstantProcessingPage() {
         </div>
         <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
         <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
-          <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-secondary sm:text-6xl lg:text-7xl">
             {headline}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">{subheadline}</p>
@@ -75,7 +75,7 @@ export default async function InstantProcessingPage() {
 
       <section className="bg-background px-4 py-20">
         <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">{aboutSection?.title || "What We're About"}</h2>
+          <h2 className="text-4xl font-bold font-calsans uppercase sm:text-5xl">{aboutSection?.title || "What We're About"}</h2>
           <p className="mt-6 text-lg text-muted-foreground">
             {aboutSection?.description ||
               "We're here to help coffee roasters expand their product lines with premium freeze-dried instant coffee. No equipment needed, just your great coffee and our expertise."}
