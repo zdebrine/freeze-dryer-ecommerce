@@ -39,7 +39,7 @@ export function ProductGrid({ products }: ProductGridProps) {
   }
 
   return (
-    <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+    <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
       {products.map((product) => {
         const image = product.images.edges[0]?.node
         const price = product.priceRange.minVariantPrice
