@@ -29,16 +29,20 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const [isNavOpen, setIsNavOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const pathname = usePathname()
-  const { itemCount } = useCart()
+  const { itemCount, cart } = useCart()
 
-  const isHomePage = pathname === "/" || pathname === "/instant-processing"
-  const shouldUseTransparentHeader = isHomePage && !isScrolled
+  useEffect(() => {
+    console.log("[v0] Header - Cart updated:", cart?.lines.edges.length ?? 0, "items, itemCount:", itemCount)
+  }, [cart, itemCount])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const isHomePage = pathname === "/" || pathname === "/instant-processing"
+  const shouldUseTransparentHeader = isHomePage && !isScrolled
 
   const logoText = config?.logoText ?? "mernin'"
   const navLinks: NavLink[] = config?.navLinks?.length
@@ -136,21 +140,33 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
           </Button>
 
           {/* Desktop Cart */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={`hidden lg:flex relative ${textColorClass} ${hoverColorClass}`}
-            onClick={() => setIsCartOpen(true)}
-          >
-            <ShoppingCart className="h-5 w-5" />
-            {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                {itemCount}
-              </span>
-            )}
-            <span className="sr-only">Cart ({itemCount} items)</span>
-          </Button>
+          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`hidden lg:flex relative ${textColorClass} ${hoverColorClass}`}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {itemCount}
+                  </span>
+                )}
+                <span className="sr-only">Cart ({itemCount} items)</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-lg">
+              <SheetHeader>
+                <SheetTitle>Shopping Cart</SheetTitle>
+              </SheetHeader>
+              <div className="mt-8">
+                <CartItems />
+              </div>
+            </SheetContent>
+          </Sheet>
 
+          {/* Mobile Cart */}
           <div className="lg:hidden">
             <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
               <SheetTrigger asChild>
@@ -188,17 +204,6 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
             </Sheet>
           </div>
         </div>
-
-        <Sheet open={isCartOpen && window.innerWidth >= 1024} onOpenChange={setIsCartOpen}>
-          <SheetContent side="right" className="w-full sm:max-w-lg">
-            <SheetHeader>
-              <SheetTitle>Shopping Cart</SheetTitle>
-            </SheetHeader>
-            <div className="mt-8">
-              <CartItems />
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
     </header>
   )
