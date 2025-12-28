@@ -18,7 +18,7 @@ export function TextMarquee({ text, speed = 30 }: TextMarqueeProps) {
         {Array.from({ length: 10 }).map((_, i) => (
           <span
             key={i}
-            className="mx-4 text-2xl font-bold font-hero uppercase tracking-wide text-primary-foreground md:mx-8 md:text-6xl"
+            className="mx-4 text-4xl font-bold font-hero uppercase tracking-wide text-primary-foreground md:mx-8 md:text-6xl"
           >
             {text}
           </span>

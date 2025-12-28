@@ -33,8 +33,6 @@ export function Testimonials({ config }: TestimonialsProps) {
     return null
   }
 
-  console.log("[v0] Rendering", testimonials.length, "testimonials")
-
   return (
     <section className="relative isolate overflow-hidden px-4">
       {/* Red diagonal band (intentionally NOT full height) */}

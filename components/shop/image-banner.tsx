@@ -38,7 +38,7 @@ export function ImageBanner({ imageUrl, overlayText, link, textPosition = "cente
             positionClasses[textPosition as keyof typeof positionClasses] || positionClasses.center
           }`}
         >
-          <h2 className="max-w-2xl text-balance text-2xl font-bold text-white md:text-4xl lg:text-6xl">
+          <h2 className="max-w-2xl text-balance tracking-wide text-2xl font-bold font-hero uppercase text-secondary md:text-4xl lg:text-6xl">
             {overlayText}
           </h2>
         </div>

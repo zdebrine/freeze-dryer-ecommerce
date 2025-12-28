@@ -31,7 +31,7 @@ export function ProductCarousel({ title, products, visibleItems = 3 }: ProductCa
   }
 
   return (
-    <section className="bg-background px-4 pb-12 md:px-8 md:pb-40">
+    <section className="bg-background px-4 py-12 md:px-8 md:pb-40">
       <div className="container mx-auto max-w-7xl">
         {title && (
           <h2 className="mb-6 text-2xl font-bold font-calsans uppercase underline md:mb-8 md:text-4xl">{title}</h2>
