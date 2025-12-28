@@ -19,7 +19,7 @@ export function CollectionBoxes({ title, collections, visibleItems = 4 }: Collec
   return (
     <section className="border-t bg-background px-4 py-10 md:py-20">
       <div className="container mx-auto max-w-7xl">
-        {title && <h2 className="mb-8 text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>}
+        {title && <h2 className="mb-8 text-3xl font-bold font-calsans uppercase underline md:text-4xl">{title}</h2>}
 
         <Carousel visibleItems={visibleItems} gap={16}>
           {collections.map((collection) => (

@@ -7,7 +7,7 @@ type TextMarqueeProps = {
 
 export function TextMarquee({ text, speed = 30 }: TextMarqueeProps) {
   return (
-    <div className="relative overflow-hidden bg-primary py-4">
+    <div className="relative overflow-hidden bg-primary py-20">
       <div
         className="flex whitespace-nowrap"
         style={{
@@ -16,7 +16,7 @@ export function TextMarquee({ text, speed = 30 }: TextMarqueeProps) {
       >
         {/* Repeat text multiple times for seamless loop */}
         {Array.from({ length: 10 }).map((_, i) => (
-          <span key={i} className="mx-8 text-lg font-bold uppercase tracking-wide text-primary-foreground md:text-2xl">
+          <span key={i} className="mx-8 text-lg font-bold font-hero uppercase tracking-wide text-primary-foreground md:text-6xl">
             {text}
           </span>
         ))}

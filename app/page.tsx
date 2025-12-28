@@ -22,8 +22,8 @@ export default async function HomePage() {
   const landing = await client.fetch(LANDING_PAGE_QUERY)
 
   // 2) Decide product limit from Sanity (fallback to 8)
-  const limit = landing?.productsSection?.limit ?? 8
-  const collection = landing?.productsSection?.collection ?? "coffees"
+  const limit = landing ?.productsSection ?.limit ?? 8
+  const collection = landing ?.productsSection ?.collection ?? "coffees"
 
   // 3) Fetch products from Shopify
   let products = []
@@ -39,7 +39,7 @@ export default async function HomePage() {
   const isShopifyConfigured = products.length > 0
 
   let secondSectionProducts = []
-  if (landing?.secondProductsSection?.enabled !== false && landing?.secondProductsSection?.collectionHandle) {
+  if (landing ?.secondProductsSection ?.enabled !== false && landing ?.secondProductsSection ?.collectionHandle) {
     try {
       secondSectionProducts = await getProducts(
         landing.secondProductsSection.limit || 8,
@@ -51,25 +51,27 @@ export default async function HomePage() {
   }
 
   // Pull section config with safe defaults
-  const productsSection = landing?.productsSection
-  const productsAnchorId = productsSection?.anchorId || "products"
-  const productsTitle = productsSection?.title || "Our Coffee"
-  const productsSubtitle = productsSection?.subtitle || "Freeze-dried perfection in every packet"
+  const productsSection = landing ?.productsSection
+  const productsAnchorId = productsSection ?.anchorId || "products"
+  const productsTitle = productsSection ?.title || "Our Coffee"
+  const productsSubtitle = productsSection ?.subtitle || "Freeze-dried perfection in every packet"
 
-  const productOfTheMonthConfig = landing?.productOfTheMonth
-  const testimonialsConfig = landing?.testimonialsSection
-  const footerConfig = landing?.footer
+  const productOfTheMonthConfig = landing ?.productOfTheMonth
+  const testimonialsConfig = landing ?.testimonialsSection
+  const footerConfig = landing ?.footer
+
+  console.log(productOfTheMonthConfig)
 
   return (
     <div className="flex min-h-screen flex-col">
-      <ShopHeader config={landing?.header} />
+      <ShopHeader config={landing ?.header} />
 
-      <HeroSection config={landing?.hero} />
+      <HeroSection config={landing ?.hero} />
 
       {/* Shopify Setup Notice - Only show if not configured */}
       {!isShopifyConfigured && <ShopifySetupNotice />}
 
-      {landing?.collectionsSection?.collections && (
+      {landing ?.collectionsSection ?.collections && (
         <CollectionBoxes
           title={landing.collectionsSection.title}
           collections={landing.collectionsSection.collections}
@@ -77,7 +79,7 @@ export default async function HomePage() {
         />
       )}
 
-      {landing?.textMarquee?.enabled !== false && landing?.textMarquee?.text && (
+      {landing ?.textMarquee ?.enabled !== false && landing ?.textMarquee ?.text && (
         <TextMarquee text={landing.textMarquee.text} speed={landing.textMarquee.speed} />
       )}
 
@@ -96,13 +98,9 @@ export default async function HomePage() {
         <ProductGrid products={products} />
       </div>
 
-      {isShopifyConfigured && productOfTheMonthConfig?.enabled !== false && (
-        <ProductOfTheMonth products={products} config={productOfTheMonthConfig} />
-      )}
+      {testimonialsConfig ?.enabled !== false && <Testimonials config={testimonialsConfig} />}
 
-      {testimonialsConfig?.enabled !== false && <Testimonials config={testimonialsConfig} />}
-
-      {landing?.secondProductsSection?.enabled !== false && secondSectionProducts.length > 0 && (
+      {landing ?.secondProductsSection ?.enabled !== false && secondSectionProducts.length > 0 && (
         <ProductCarousel
           title={landing.secondProductsSection.title}
           products={secondSectionProducts}
@@ -110,7 +108,7 @@ export default async function HomePage() {
         />
       )}
 
-      {landing?.imageBanner?.enabled !== false && landing?.imageBanner?.imageUrl && (
+      {landing ?.imageBanner ?.enabled !== false && landing ?.imageBanner ?.imageUrl && (
         <ImageBanner
           imageUrl={landing.imageBanner.imageUrl}
           overlayText={landing.imageBanner.overlayText || ""}
@@ -119,7 +117,10 @@ export default async function HomePage() {
         />
       )}
 
-      <Cta config={landing?.ctaBox} />
+      {isShopifyConfigured && productOfTheMonthConfig ?.enabled !== false && (
+        <ProductOfTheMonth config={productOfTheMonthConfig} />
+      )}
+      <Cta config={landing ?.ctaBox} />
 
       {/* Footer */}
       <ShopFooter config={footerConfig} />
