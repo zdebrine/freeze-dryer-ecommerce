@@ -2,41 +2,39 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
 
 type TestimonialData = {
-  _id: string
   name: string
-  role: string
+  role?: string
   content: string
   rating: number
 }
 
-const testimonials: TestimonialData[] = [
-  {
-    _id: "1",
-    name: "Sarah Johnson",
-    role: "Coffee Enthusiast",
-    content:
-      "The best instant coffee I've ever tried. It actually tastes like real coffee, not the usual instant blend. Perfect for my morning hikes!",
-    rating: 5,
-  },
-  {
-    _id: "2",
-    name: "Michael Chen",
-    role: "Remote Worker",
-    content:
-      "As someone who works remotely and travels often, this has been a game-changer. The quality is incredible and it's so convenient.",
-    rating: 5,
-  },
-  {
-    _id: "3",
-    name: "Emma Davis",
-    role: "Outdoor Adventurer",
-    content:
-      "I take these packets on every camping trip. They're lightweight, don't take up space, and the coffee is actually delicious!",
-    rating: 5,
-  },
-]
+type TestimonialsConfig = {
+  enabled?: boolean
+  title?: string
+  subtitle?: string
+  testimonials?: TestimonialData[]
+}
 
-export function Testimonials() {
+type TestimonialsProps = {
+  config?: TestimonialsConfig
+}
+
+export function Testimonials({ config }: TestimonialsProps) {
+  console.log("[v0] Testimonials config:", config)
+  console.log("[v0] Testimonials array:", config?.testimonials)
+
+  // Use Sanity data if available, otherwise use defaults
+  const testimonials = config?.testimonials || []
+  const title = config?.title || "Word on the street"
+
+  // Don't render if no testimonials
+  if (!testimonials || testimonials.length === 0) {
+    console.log("[v0] No testimonials to display")
+    return null
+  }
+
+  console.log("[v0] Rendering", testimonials.length, "testimonials")
+
   return (
     <section className="relative isolate overflow-hidden px-4">
       {/* Red diagonal band (intentionally NOT full height) */}
@@ -54,13 +52,13 @@ export function Testimonials() {
       <div className="relative container mx-auto max-w-7xl py-12 sm:py-56">
         <div className="mb-8 text-center md:mb-10">
           <h2 className="font-calsans text-3xl font-bold uppercase tracking-tight text-secondary sm:text-5xl">
-            Word on the street
+            {title}
           </h2>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <Card key={testimonial._id} className="backdrop-blur">
+          {testimonials.map((testimonial, index) => (
+            <Card key={index} className="backdrop-blur">
               <CardContent className="p-6">
                 <div className="mb-4 flex gap-1">
                   {Array.from({ length: testimonial.rating }).map((_, i) => (
@@ -72,7 +70,7 @@ export function Testimonials() {
 
                 <div>
                   <p className="font-semibold">{testimonial.name}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  {testimonial.role && <p className="text-sm text-muted-foreground">{testimonial.role}</p>}
                 </div>
               </CardContent>
             </Card>

@@ -10,7 +10,7 @@ import { apiVersion, dataset, projectId } from "./cms/env"
 import { schema } from "./cms/schemaTypes/schema"
 import { structure } from "./cms/structure"
 
-const config = defineConfig({
+export const config = defineConfig({
   basePath: "/studio",
   projectId,
   dataset,
@@ -18,8 +18,4 @@ const config = defineConfig({
   plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
 })
 
-// Named export
-export { config }
-
-// Default export
 export default config
