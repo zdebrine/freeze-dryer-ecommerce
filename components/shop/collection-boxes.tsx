@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
+import { Carousel } from "@/components/shop/carousel"
 
 type CollectionBox = {
   title: string
@@ -11,20 +12,21 @@ type CollectionBox = {
 type CollectionBoxesProps = {
   title?: string
   collections: CollectionBox[]
+  visibleItems?: number
 }
 
-export function CollectionBoxes({ title, collections }: CollectionBoxesProps) {
+export function CollectionBoxes({ title, collections, visibleItems = 4 }: CollectionBoxesProps) {
   return (
     <section className="border-t bg-background px-4 py-10 md:py-20">
       <div className="container mx-auto max-w-7xl">
         {title && <h2 className="mb-8 text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>}
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Carousel visibleItems={visibleItems} gap={16}>
           {collections.map((collection) => (
             <Link
               key={collection.collectionHandle}
               href={`/shop/collection/${collection.collectionHandle}`}
-              className="group"
+              className="group block"
             >
               <Card className="overflow-hidden border-0 bg-muted/15 transition-all hover:bg-muted/25 hover:shadow-lg">
                 <div className="relative aspect-square">
@@ -49,7 +51,7 @@ export function CollectionBoxes({ title, collections }: CollectionBoxesProps) {
               </Card>
             </Link>
           ))}
-        </div>
+        </Carousel>
       </div>
     </section>
   )

@@ -159,6 +159,14 @@ export default defineType({
           initialValue: "What are you looking for?",
         }),
         defineField({
+          name: "visibleItems",
+          title: "Number of Visible Items",
+          type: "number",
+          description: "How many collection boxes to show at once. Shows arrows if more exist.",
+          initialValue: 4,
+          validation: (r) => r.min(1).max(8),
+        }),
+        defineField({
           name: "collections",
           title: "Collection Boxes",
           type: "array",
@@ -315,8 +323,8 @@ export default defineType({
     }),
 
     defineField({
-      name: "collectionsSection2",
-      title: "Second Collections Row",
+      name: "secondProductsSection",
+      title: "Second Products Section",
       type: "object",
       fields: [
         defineField({
@@ -332,35 +340,27 @@ export default defineType({
           initialValue: "Explore More",
         }),
         defineField({
-          name: "collections",
-          title: "Collection Boxes",
-          type: "array",
-          of: [
-            {
-              type: "object",
-              fields: [
-                defineField({
-                  name: "title",
-                  title: "Display Title",
-                  type: "string",
-                  validation: (r) => r.required(),
-                }),
-                defineField({
-                  name: "collectionHandle",
-                  title: "Shopify Collection Handle",
-                  type: "string",
-                  validation: (r) => r.required(),
-                }),
-                defineField({
-                  name: "image",
-                  title: "Collection Image",
-                  type: "image",
-                  options: { hotspot: true },
-                }),
-              ],
-            },
-          ],
-          validation: (r) => r.min(1).max(8),
+          name: "collectionHandle",
+          title: "Shopify Collection Handle",
+          type: "string",
+          description: "Products from this collection will be displayed",
+          initialValue: "featured",
+        }),
+        defineField({
+          name: "visibleItems",
+          title: "Number of Visible Products",
+          type: "number",
+          description: "How many products to show at once. Shows arrows if more exist.",
+          initialValue: 3,
+          validation: (r) => r.min(1).max(6),
+        }),
+        defineField({
+          name: "limit",
+          title: "Total Products to Fetch",
+          type: "number",
+          description: "Maximum number of products to load from this collection",
+          initialValue: 8,
+          validation: (r) => r.min(1).max(24),
         }),
       ],
     }),

@@ -13,6 +13,7 @@ import { Cta } from "@/components/shop/cta"
 import { CollectionBoxes } from "@/components/shop/collection-boxes"
 import { TextMarquee } from "@/components/shop/text-marquee"
 import { ImageBanner } from "@/components/shop/image-banner"
+import { ProductCarousel } from "@/components/shop/product-carousel"
 
 export const revalidate = 60
 
@@ -37,7 +38,19 @@ export default async function HomePage() {
 
   const isShopifyConfigured = products.length > 0
 
-  // 4) Pull section config with safe defaults
+  let secondSectionProducts = []
+  if (landing?.secondProductsSection?.enabled !== false && landing?.secondProductsSection?.collectionHandle) {
+    try {
+      secondSectionProducts = await getProducts(
+        landing.secondProductsSection.limit || 8,
+        landing.secondProductsSection.collectionHandle,
+      )
+    } catch (error) {
+      console.error("Failed to fetch second section products:", error)
+    }
+  }
+
+  // Pull section config with safe defaults
   const productsSection = landing?.productsSection
   const productsAnchorId = productsSection?.anchorId || "products"
   const productsTitle = productsSection?.title || "Our Coffee"
@@ -60,6 +73,7 @@ export default async function HomePage() {
         <CollectionBoxes
           title={landing.collectionsSection.title}
           collections={landing.collectionsSection.collections}
+          visibleItems={landing.collectionsSection.visibleItems}
         />
       )}
 
@@ -81,18 +95,18 @@ export default async function HomePage() {
       <div className="px-4 pb-20 md:px-16">
         <ProductGrid products={products} />
       </div>
-      {/* Product of the Month */}
+
       {isShopifyConfigured && productOfTheMonthConfig?.enabled !== false && (
         <ProductOfTheMonth products={products} config={productOfTheMonthConfig} />
       )}
 
-      {/* Testimonials */}
       {testimonialsConfig?.enabled !== false && <Testimonials config={testimonialsConfig} />}
 
-      {landing?.collectionsSection2?.enabled !== false && landing?.collectionsSection2?.collections && (
-        <CollectionBoxes
-          title={landing.collectionsSection2.title}
-          collections={landing.collectionsSection2.collections}
+      {landing?.secondProductsSection?.enabled !== false && secondSectionProducts.length > 0 && (
+        <ProductCarousel
+          title={landing.secondProductsSection.title}
+          products={secondSectionProducts}
+          visibleItems={landing.secondProductsSection.visibleItems}
         />
       )}
 
