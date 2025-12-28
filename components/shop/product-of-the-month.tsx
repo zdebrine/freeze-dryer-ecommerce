@@ -13,6 +13,7 @@ type Config = {
 }
 
 export function ProductOfTheMonth({ product, config }: { product: ShopifyProduct | null; config?: Config }) {
+  
   if (!product) return null
 
   const image = product.images.edges[0]?.node

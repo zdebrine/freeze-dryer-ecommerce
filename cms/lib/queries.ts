@@ -21,14 +21,45 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
       subheadline,
       ctas
     },
+    collectionsSection {
+      title,
+      visibleItems,
+      collections[] {
+        title,
+        collectionHandle,
+        "imageUrl": image.asset->url
+      }
+    },
+    textMarquee,
     productsSection,
-    productOfTheMonth,
+    productOfTheMonth {
+      enabled,
+      badgeText,
+      title,
+      productHandle,
+      descriptionOverride,
+      buttonText
+    },
     testimonialsSection {
       enabled,
       title,
       subtitle,
       backgroundColor,
       testimonials
+    },
+    secondProductsSection {
+      enabled,
+      title,
+      collectionHandle,
+      visibleItems,
+      limit
+    },
+    imageBanner {
+      enabled,
+      "imageUrl": image.asset->url,
+      overlayText,
+      link,
+      textPosition
     },
     ctaBox{
       ctaText,

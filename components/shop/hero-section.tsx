@@ -33,13 +33,10 @@ function isExternalUrl(href: string) {
 }
 
 export function HeroSection({ config }: { config?: HeroConfig }) {
-
   const backgroundType = config?.backgroundType ?? "video"
 
-  const mp4Src =
-    config?.videoMp4 || process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL || undefined
-  const webmSrc =
-    config?.videoWebm || process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL || undefined
+  const mp4Src = config?.videoMp4 || process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL || undefined
+  const webmSrc = config?.videoWebm || process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL || undefined
   const posterSrc = config?.posterUrl || "/hero.png"
 
   const overlayOpacity = typeof config?.overlayOpacity === "number" ? config.overlayOpacity : 0.6
@@ -50,23 +47,22 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
     config?.subheadline ??
     "Experience the rich, bold flavor of freshly brewed coffee in convenient instant form. Perfectly freeze-dried to preserve every note and aroma."
 
-  const ctas =
-    config?.ctas?.length
-      ? config.ctas
-      : [
-          { label: "Shop Coffee", href: "/#products", variant: "primary" },
-          { label: "For Roasters", href: "/instant-processing", variant: "outline" },
-        ]
+  const ctas = config?.ctas?.length
+    ? config.ctas
+    : [
+        { label: "Shop Coffee", href: "/#products", variant: "primary" },
+        { label: "For Roasters", href: "/instant-processing", variant: "outline" },
+      ]
 
   return (
-    <section className="relative flex h-screen items-center justify-center overflow-hidden">
+    <section className="relative flex h-[60vh] md:h-[80vh] items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         {backgroundType === "image" ? (
           <div className="relative h-full w-full">
             {config?.backgroundImageUrl ? (
               <Image
-                src={config.backgroundImageUrl}
+                src={config.backgroundImageUrl || "/placeholder.svg"}
                 alt="Hero background"
                 fill
                 priority
@@ -95,11 +91,11 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
       <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto max-w-5xl px-4 py-20 text-center">
+      <div className="relative z-10 container mx-auto max-w-5xl px-4 py-12 md:py-20 text-center">
         {headlineMode === "image" && config?.headlineImageUrl ? (
           <div className="mx-auto mb-6 w-full max-w-3xl">
             <Image
-              src={config.headlineImageUrl}
+              src={config.headlineImageUrl || "/placeholder.svg"}
               alt="Hero headline"
               width={1600}
               height={600}
@@ -109,19 +105,19 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
             />
           </div>
         ) : (
-          <h1 className="text-balance font-hero text-5xl tracking-wide uppercase text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-balance font-hero text-3xl tracking-wide uppercase text-white sm:text-5xl lg:text-7xl">
             {headlineText}
           </h1>
         )}
 
         {subheadline ? (
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-white/80 sm:text-xl">
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-base text-white/80 sm:text-lg md:mt-6 md:text-xl">
             {subheadline}
           </p>
         ) : null}
 
         {ctas.length ? (
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 md:mt-10">
             {ctas.map((cta, idx) => {
               const variant = buttonVariant(cta.variant)
               const isPrimary = cta.variant === "primary" || !cta.variant
@@ -139,8 +135,8 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
                   variant={variant as any}
                   className={
                     variant === "outline"
-                      ? "min-w-70 text-lg font-calsans bg-white/10 text-white hover:bg-white/20 border-white/20"
-                      : "min-w-70 text-lg font-calsans uppercase"
+                      ? "min-w-[200px] text-base font-calsans bg-white/10 text-white hover:bg-white/20 border-white/20 md:min-w-[280px] md:text-lg"
+                      : "min-w-[200px] text-base font-calsans uppercase md:min-w-[280px] md:text-lg"
                   }
                 >
                   <Link {...(linkProps as any)}>

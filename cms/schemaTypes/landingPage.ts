@@ -144,7 +144,79 @@ export default defineType({
           ],
           validation: (r) => r.min(0).max(4),
         }),
-       
+      ],
+    }),
+
+    defineField({
+      name: "collectionsSection",
+      title: "Collections Section (What are you looking for?)",
+      type: "object",
+      fields: [
+        defineField({
+          name: "title",
+          title: "Section Title",
+          type: "string",
+          initialValue: "What are you looking for?",
+        }),
+        defineField({
+          name: "visibleItems",
+          title: "Number of Visible Items",
+          type: "number",
+          description: "How many collection boxes to show at once. Shows arrows if more exist.",
+          initialValue: 4,
+          validation: (r) => r.min(1).max(8),
+        }),
+        defineField({
+          name: "collections",
+          title: "Collection Boxes",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                defineField({
+                  name: "title",
+                  title: "Display Title",
+                  type: "string",
+                  validation: (r) => r.required(),
+                }),
+                defineField({
+                  name: "collectionHandle",
+                  title: "Shopify Collection Handle",
+                  type: "string",
+                  description: "The handle from your Shopify collection URL",
+                  validation: (r) => r.required(),
+                }),
+                defineField({
+                  name: "image",
+                  title: "Collection Image",
+                  type: "image",
+                  options: { hotspot: true },
+                }),
+              ],
+              preview: {
+                select: {
+                  title: "title",
+                  handle: "collectionHandle",
+                  media: "image",
+                },
+                prepare({ title, handle }) {
+                  return {
+                    title: title || "Untitled",
+                    subtitle: handle ? `Handle: ${handle}` : "No handle set",
+                  }
+                },
+              },
+            },
+          ],
+          initialValue: [
+            { title: "Coffee by the bag", collectionHandle: "coffee-bags" },
+            { title: "Instant coffee", collectionHandle: "instant-coffee" },
+            { title: "Gear", collectionHandle: "gear" },
+            { title: "Merch", collectionHandle: "merch" },
+          ],
+          validation: (r) => r.min(1).max(8),
+        }),
       ],
     }),
 
@@ -210,7 +282,7 @@ export default defineType({
           name: "subtitle",
           title: "Subtitle",
           type: "string",
-          initialValue: "Don’t just take our word for it",
+          initialValue: "Don't just take our word for it",
         }),
         defineField({
           name: "testimonials",
@@ -222,8 +294,129 @@ export default defineType({
       ],
     }),
 
-    //CTA BOX
+    defineField({
+      name: "textMarquee",
+      title: "Text Marquee",
+      type: "object",
+      fields: [
+        defineField({
+          name: "enabled",
+          title: "Enabled",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "text",
+          title: "Marquee Text",
+          type: "string",
+          initialValue: "Premium Freeze-Dried Coffee • Instant Perfection • Sustainable Sourcing",
+        }),
+        defineField({
+          name: "speed",
+          title: "Scroll Speed (seconds)",
+          type: "number",
+          description: "Lower = faster",
+          initialValue: 30,
+          validation: (r) => r.min(5).max(60),
+        }),
+      ],
+    }),
 
+    defineField({
+      name: "secondProductsSection",
+      title: "Second Products Section",
+      type: "object",
+      fields: [
+        defineField({
+          name: "enabled",
+          title: "Enabled",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "title",
+          title: "Section Title",
+          type: "string",
+          initialValue: "Explore More",
+        }),
+        defineField({
+          name: "collectionHandle",
+          title: "Shopify Collection Handle",
+          type: "string",
+          description: "Products from this collection will be displayed",
+          initialValue: "featured",
+        }),
+        defineField({
+          name: "visibleItems",
+          title: "Number of Visible Products",
+          type: "number",
+          description: "How many products to show at once. Shows arrows if more exist.",
+          initialValue: 3,
+          validation: (r) => r.min(1).max(6),
+        }),
+        defineField({
+          name: "limit",
+          title: "Total Products to Fetch",
+          type: "number",
+          description: "Maximum number of products to load from this collection",
+          initialValue: 8,
+          validation: (r) => r.min(1).max(24),
+        }),
+      ],
+    }),
+
+    defineField({
+      name: "imageBanner",
+      title: "Image Banner",
+      type: "object",
+      fields: [
+        defineField({
+          name: "enabled",
+          title: "Enabled",
+          type: "boolean",
+          initialValue: true,
+        }),
+        defineField({
+          name: "image",
+          title: "Banner Image",
+          type: "image",
+          options: { hotspot: true },
+        }),
+        defineField({
+          name: "overlayText",
+          title: "Overlay Text",
+          type: "string",
+          initialValue: "Discover Our Story",
+        }),
+        defineField({
+          name: "link",
+          title: "Link URL",
+          type: "string",
+          initialValue: "/about",
+        }),
+        defineField({
+          name: "textPosition",
+          title: "Text Position",
+          type: "string",
+          options: {
+            list: [
+              { title: "Top Left", value: "top-left" },
+              { title: "Top Center", value: "top-center" },
+              { title: "Top Right", value: "top-right" },
+              { title: "Center Left", value: "center-left" },
+              { title: "Center", value: "center" },
+              { title: "Center Right", value: "center-right" },
+              { title: "Bottom Left", value: "bottom-left" },
+              { title: "Bottom Center", value: "bottom-center" },
+              { title: "Bottom Right", value: "bottom-right" },
+            ],
+          },
+          initialValue: "center",
+        }),
+      ],
+    }),
+
+    //CTA BOX
     defineField({
       name: "ctaBox",
       title: "CTA Box",
@@ -243,7 +436,6 @@ export default defineType({
           type: "string",
           initialValue: "Premium instant coffee, freeze-dried to perfection.",
         }),
-
         defineField({
           name: "columns",
           title: "Footer Columns",
@@ -267,7 +459,6 @@ export default defineType({
           ],
           validation: (r) => r.min(0).max(6),
         }),
-
         defineField({
           name: "copyrightText",
           title: "Copyright Text",

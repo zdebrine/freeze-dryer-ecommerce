@@ -56,6 +56,7 @@ export type ShopifyProduct = {
   title: string
   handle: string
   description: string
+  descriptionHtml: string
   priceRange: {
     minVariantPrice: {
       amount: string
@@ -114,6 +115,53 @@ export type ShopifyCollection = {
   }
 }
 
+type ProductEdge = {
+  node: ShopifyProduct & { variants: { edges: Array<{ node: ProductVariant }> } }
+}
+
+type CollectionProductsResponse = {
+  collectionByHandle: {
+    products: {
+      edges: ProductEdge[]
+    }
+  } | null
+}
+
+type ProductsResponse = {
+  products: {
+    edges: ProductEdge[]
+  }
+}
+
+type ProductByHandleResponse = {
+  productByHandle: {
+    id: string
+    title: string
+    handle: string
+    description: string
+    descriptionHtml: string
+    availableForSale: boolean
+    options: ProductOption[]
+    priceRange: {
+      minVariantPrice: Money
+    }
+    images: {
+      edges: Array<{ node: { url: string; altText: string | null } }>
+    }
+    variants: {
+      edges: Array<{
+        node: {
+          id: string
+          title: string
+          availableForSale: boolean
+          price: Money
+          selectedOptions: SelectedOption[]
+        }
+      }>
+    }
+  } | null
+}
+
 async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
     throw new Error(
@@ -150,10 +198,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
   return json.data
 }
 
-export async function getProducts(
-  first = 12,
-  collectionHandle?: string,
-): Promise<ShopifyProduct[]> {
+export async function getProducts(first = 12, collectionHandle?: string): Promise<ShopifyProduct[]> {
   try {
     const query = collectionHandle
       ? `
@@ -166,6 +211,7 @@ export async function getProducts(
                   title
                   handle
                   description
+                  descriptionHtml
                   availableForSale
                   options {
                     id
@@ -218,6 +264,7 @@ export async function getProducts(
                 title
                 handle
                 description
+                descriptionHtml
                 availableForSale
                 options {
                   id
@@ -263,37 +310,23 @@ export async function getProducts(
 
     const variables = collectionHandle ? { first, handle: collectionHandle } : { first }
 
-    const data = await shopifyFetch<
-      collectionHandle extends string
-        ? {
-            collectionByHandle: {
-              products: {
-                edges: Array<{ node: ShopifyProduct & { variants: { edges: any[] } } }>
-              }
-            } | null
-          }
-        : {
-            products: {
-              edges: Array<{ node: ShopifyProduct & { variants: { edges: any[] } } }>
-            }
-          }
-    >(query, variables)
+    const data = collectionHandle
+      ? await shopifyFetch<CollectionProductsResponse>(query, variables)
+      : await shopifyFetch<ProductsResponse>(query, variables)
 
-    const edges =
-      collectionHandle
-        ? (data as any).collectionByHandle?.products?.edges ?? []
-        : (data as any).products?.edges ?? []
+    const edges = collectionHandle
+      ? ((data as CollectionProductsResponse).collectionByHandle?.products?.edges ?? [])
+      : ((data as ProductsResponse).products?.edges ?? [])
 
-    return edges.map((edge: any) => ({
+    return edges.map((edge) => ({
       ...edge.node,
-      variants: edge.node.variants.edges.map((v: any) => v.node),
+      variants: edge.node.variants.edges.map((v) => v.node),
     }))
   } catch (error) {
     console.error("Failed to fetch products from Shopify:", error)
     return []
   }
 }
-
 
 export async function getProduct(handle: string): Promise<ShopifyProduct | null> {
   try {
@@ -304,6 +337,7 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
           title
           handle
           description
+          descriptionHtml
           availableForSale
           options {
             id
@@ -345,33 +379,7 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
       }
     `
 
-    const data = await shopifyFetch<{
-      productByHandle: {
-        id: string
-        title: string
-        handle: string
-        description: string
-        availableForSale: boolean
-        options: ProductOption[]
-        priceRange: {
-          minVariantPrice: Money
-        }
-        images: {
-          edges: Array<{ node: { url: string; altText: string | null } }>
-        }
-        variants: {
-          edges: Array<{
-            node: {
-              id: string
-              title: string
-              availableForSale: boolean
-              price: Money
-              selectedOptions: SelectedOption[]
-            }
-          }>
-        }
-      } | null
-    }>(query, { handle })
+    const data = await shopifyFetch<ProductByHandleResponse>(query, { handle })
 
     if (!data.productByHandle) {
       return null
@@ -487,10 +495,7 @@ export async function createCart(): Promise<ShopifyCart> {
   `
 
   const data = await shopifyFetch<{
-    cartCreate: {
-      cart: ShopifyCart
-      userErrors: Array<{ field: string; message: string }>
-    }
+    cartCreate: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
   }>(query)
 
   if (data.cartCreate.userErrors.length > 0) {
@@ -568,10 +573,7 @@ export async function addCartLines(
   `
 
   const data = await shopifyFetch<{
-    cartLinesAdd: {
-      cart: ShopifyCart
-      userErrors: Array<{ field: string; message: string }>
-    }
+    cartLinesAdd: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
   }>(query, {
     cartId,
     lines,
@@ -652,10 +654,7 @@ export async function updateCartLines(
   `
 
   const data = await shopifyFetch<{
-    cartLinesUpdate: {
-      cart: ShopifyCart
-      userErrors: Array<{ field: string; message: string }>
-    }
+    cartLinesUpdate: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
   }>(query, {
     cartId,
     lines,
@@ -733,10 +732,7 @@ export async function removeCartLines(cartId: string, lineIds: string[]): Promis
   `
 
   const data = await shopifyFetch<{
-    cartLinesRemove: {
-      cart: ShopifyCart
-      userErrors: Array<{ field: string; message: string }>
-    }
+    cartLinesRemove: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
   }>(query, {
     cartId,
     lineIds,
@@ -807,9 +803,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
     }
   `
 
-  const data = await shopifyFetch<{
-    cart: ShopifyCart | null
-  }>(query, { cartId })
+  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(query, { cartId })
 
   return data.cart
 }
