@@ -100,17 +100,16 @@ export default async function HomePage() {
       )}
 
       {/* Product Grid */}
-      <section id={productsAnchorId} className="border-t bg-background px-4 pt-10 md:pt-20">
+      <section id={productsAnchorId} className="border-t bg-background px-4 pt-6 md:pt-10 md:px-8">
         <div className="mx-auto">
           <div className="mb-4 text-center md:mb-12 md:px-16">
-            <h2 className="font-calsans text-5xl font-extrabold uppercase tracking-tight md:text-8xl">
+            <h2 className="font-calsans text-4xl font-extrabold uppercase tracking-tight md:text-8xl">
               {productsTitle}
             </h2>
-            {/* <p className="mt-4 text-lg text-muted-foreground">{productsSubtitle}</p> */}
           </div>
         </div>
       </section>
-      <div className="px-4 pb-20 md:px-16">
+      <div className="px-4 pb-12 md:px-16 md:pb-20">
         <ProductGrid products={products} />
       </div>
 

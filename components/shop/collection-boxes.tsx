@@ -17,11 +17,13 @@ type CollectionBoxesProps = {
 
 export function CollectionBoxes({ title, collections, visibleItems = 4 }: CollectionBoxesProps) {
   return (
-    <section className="border-t bg-background px-4 py-10 md:py-20">
+    <section className="border-t bg-background px-4 py-8 md:px-8 md:py-20">
       <div className="container mx-auto max-w-7xl">
-        {title && <h2 className="mb-8 text-3xl font-bold font-calsans uppercase underline md:text-4xl">{title}</h2>}
+        {title && (
+          <h2 className="mb-6 text-2xl font-bold font-calsans uppercase underline md:mb-8 md:text-4xl">{title}</h2>
+        )}
 
-        <Carousel visibleItems={visibleItems} gap={16}>
+        <Carousel visibleItems={visibleItems} mobileVisibleItems={2} gap={16}>
           {collections.map((collection) => (
             <Link
               key={collection.collectionHandle}
@@ -45,7 +47,7 @@ export function CollectionBoxes({ title, collections, visibleItems = 4 }: Collec
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-lg font-bold text-white">{collection.title}</h3>
+                    <h3 className="text-base font-bold text-white md:text-lg">{collection.title}</h3>
                   </div>
                 </div>
               </Card>

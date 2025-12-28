@@ -10,20 +10,32 @@ import { cn } from "@/lib/utils"
 type CarouselProps = {
   children: ReactNode[]
   visibleItems?: number
+  mobileVisibleItems?: number
   gap?: number
   className?: string
 }
 
-export function Carousel({ children, visibleItems = 4, gap = 16, className }: CarouselProps) {
+export function Carousel({ children, visibleItems = 4, mobileVisibleItems = 2, gap = 16, className }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  const effectiveVisibleItems = isMobile ? mobileVisibleItems : visibleItems
   const totalItems = children.length
   const canScrollLeft = currentIndex > 0
-  const canScrollRight = currentIndex < totalItems - visibleItems
+  const canScrollRight = currentIndex < totalItems - effectiveVisibleItems
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   const scrollToPrevious = () => {
     if (canScrollLeft) {
@@ -33,7 +45,7 @@ export function Carousel({ children, visibleItems = 4, gap = 16, className }: Ca
 
   const scrollToNext = () => {
     if (canScrollRight) {
-      setCurrentIndex((prev) => Math.min(totalItems - visibleItems, prev + 1))
+      setCurrentIndex((prev) => Math.min(totalItems - effectiveVisibleItems, prev + 1))
     }
   }
 
@@ -121,8 +133,8 @@ export function Carousel({ children, visibleItems = 4, gap = 16, className }: Ca
             <div
               key={index}
               style={{
-                minWidth: `calc((100% - ${gap * (visibleItems - 1)}px) / ${visibleItems})`,
-                maxWidth: `calc((100% - ${gap * (visibleItems - 1)}px) / ${visibleItems})`,
+                minWidth: `calc((100% - ${gap * (effectiveVisibleItems - 1)}px) / ${effectiveVisibleItems})`,
+                maxWidth: `calc((100% - ${gap * (effectiveVisibleItems - 1)}px) / ${effectiveVisibleItems})`,
               }}
             >
               {child}
@@ -131,7 +143,7 @@ export function Carousel({ children, visibleItems = 4, gap = 16, className }: Ca
         </div>
       </div>
 
-      {totalItems > visibleItems && (
+      {totalItems > effectiveVisibleItems && (
         <>
           <Button
             variant="outline"

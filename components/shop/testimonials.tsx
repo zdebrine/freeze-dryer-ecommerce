@@ -51,14 +51,14 @@ export function Testimonials() {
         "
       />
 
-      <div className="relative container mx-auto max-w-7xl py-8 sm:py-56">
-        <div className="mb-10 text-center">
-          <h2 className="font-calsans text-4xl font-bold uppercase tracking-tight text-secondary sm:text-5xl">
+      <div className="relative container mx-auto max-w-7xl py-12 sm:py-56">
+        <div className="mb-8 text-center md:mb-10">
+          <h2 className="font-calsans text-3xl font-bold uppercase tracking-tight text-secondary sm:text-5xl">
             Word on the street
           </h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {testimonials.map((testimonial) => (
             <Card key={testimonial._id} className="backdrop-blur">
               <CardContent className="p-6">

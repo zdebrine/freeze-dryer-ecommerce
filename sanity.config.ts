@@ -18,5 +18,8 @@ const config = defineConfig({
   plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
 })
 
+// Named export
 export { config }
+
+// Default export - explicitly set as the config constant
 export default config

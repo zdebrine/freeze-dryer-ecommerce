@@ -22,7 +22,7 @@ export function ImageBanner({ imageUrl, overlayText, link, textPosition = "cente
   }
 
   return (
-    <section className="relative h-[400px] w-full overflow-hidden md:h-[500px]">
+    <section className="relative h-[300px] w-full overflow-hidden md:h-[500px]">
       <Link href={link} className="block h-full w-full">
         <Image
           src={imageUrl || "/placeholder.svg"}
@@ -34,11 +34,13 @@ export function ImageBanner({ imageUrl, overlayText, link, textPosition = "cente
         />
         <div className="absolute inset-0 bg-black/40" />
         <div
-          className={`absolute inset-0 flex p-8 md:p-16 ${
+          className={`absolute inset-0 flex p-4 md:p-8 lg:p-16 ${
             positionClasses[textPosition as keyof typeof positionClasses] || positionClasses.center
           }`}
         >
-          <h2 className="max-w-2xl text-balance text-4xl font-bold text-white md:text-6xl">{overlayText}</h2>
+          <h2 className="max-w-2xl text-balance text-2xl font-bold text-white md:text-4xl lg:text-6xl">
+            {overlayText}
+          </h2>
         </div>
       </Link>
     </section>
