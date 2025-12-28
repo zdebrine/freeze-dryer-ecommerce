@@ -20,7 +20,7 @@ export function CollectionBoxes({ title, collections, visibleItems = 4 }: Collec
     <section className="border-t bg-background px-4 py-8 md:px-8 md:py-20">
       <div className="container mx-auto max-w-7xl">
         {title && (
-          <h2 className="mb-6 text-2xl font-bold font-calsans uppercase underline md:mb-8 md:text-4xl">{title}</h2>
+          <h2 className="mb-6 text-2xl font-bold font-calsans uppercase md:mb-8 md:text-4xl">{title}</h2>
         )}
 
         <Carousel visibleItems={visibleItems} mobileVisibleItems={2} gap={16}>
@@ -45,9 +45,9 @@ export function CollectionBoxes({ title, collections, visibleItems = 4 }: Collec
                       <span className="text-4xl font-bold text-muted-foreground/20">{collection.title.charAt(0)}</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-black/5 " />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-base font-bold text-white md:text-lg">{collection.title}</h3>
+                    <h3 className="text-base font-bold tracking-wide font-calsans uppercase text-center md:text-lg">{collection.title}</h3>
                   </div>
                 </div>
               </Card>
