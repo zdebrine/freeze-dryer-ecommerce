@@ -1,11 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import Link from "next/link"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, Menu, LogIn } from "lucide-react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { useCart } from "@/components/cart/cart-context"
+import { CartItems } from "@/components/cart/cart-items"
 
 type NavLink = {
   label: string
@@ -24,6 +26,8 @@ function isExternalUrl(href: string) {
 
 export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isNavOpen, setIsNavOpen] = useState(false)
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const pathname = usePathname()
   const { itemCount } = useCart()
 
@@ -37,15 +41,19 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   }, [])
 
   const logoText = config?.logoText ?? "mernin'"
-  const navLinks: NavLink[] =
-    config?.navLinks?.length
-      ? config.navLinks
-      : [
-          { label: "Shop", href: "/#products" },
-          { label: "For Roasters", href: "/instant-processing" },
-          { label: "About", href: "/#about" },
-        ]
+  const navLinks: NavLink[] = config?.navLinks?.length
+    ? config.navLinks
+    : [
+        { label: "Shop", href: "/#products" },
+        { label: "For Roasters", href: "/instant-processing" },
+        { label: "About", href: "/#about" },
+      ]
   const loginLabel = config?.loginLabel ?? "Login"
+
+  const textColorClass = shouldUseTransparentHeader ? "text-secondary" : "text-foreground"
+  const hoverColorClass = shouldUseTransparentHeader
+    ? "hover:text-secondary/80 hover:bg-secondary/10"
+    : "hover:text-primary hover:bg-primary/10"
 
   return (
     <header
@@ -56,17 +64,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
       }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <span
-            className={`text-3xl font-hero transition-colors ${
-              shouldUseTransparentHeader ? "text-secondary" : "text-primary"
-            }`}
-          >
-            {logoText}
-          </span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-6 flex-1">
           {navLinks.map((l, idx) => {
             const linkProps = isExternalUrl(l.href)
               ? { href: l.href, target: "_blank", rel: "noreferrer" }
@@ -76,9 +74,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
               <Link
                 key={`${l.label}-${l.href}-${idx}`}
                 {...(linkProps as any)}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  shouldUseTransparentHeader ? "text-secondary hover:text-secondary/80" : "text-foreground"
-                }`}
+                className={`text-sm font-medium transition-colors ${textColorClass} ${hoverColorClass}`}
               >
                 {l.label}
               </Link>
@@ -86,32 +82,123 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
           })}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className={`relative ${shouldUseTransparentHeader ? "text-secondary hover:text-secondary hover:bg-secondary/10" : ""}`}
+        <div className="lg:hidden">
+          <Sheet open={isNavOpen} onOpenChange={setIsNavOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className={textColorClass}>
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-4 mt-8">
+                {navLinks.map((l, idx) => {
+                  const linkProps = isExternalUrl(l.href)
+                    ? { href: l.href, target: "_blank", rel: "noreferrer" }
+                    : { href: l.href }
+
+                  return (
+                    <Link
+                      key={`mobile-${l.label}-${l.href}-${idx}`}
+                      {...(linkProps as any)}
+                      className="text-lg font-medium transition-colors hover:text-primary"
+                      onClick={() => setIsNavOpen(false)}
+                    >
+                      {l.label}
+                    </Link>
+                  )
+                })}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <Link href="/" className="flex items-center gap-2 lg:flex-1 lg:justify-center">
+          <span
+            className={`text-3xl font-hero transition-colors ${
+              shouldUseTransparentHeader ? "text-secondary" : "text-primary"
+            }`}
           >
-            <Link href="/cart">
-              <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                  {itemCount}
-                </span>
-              )}
-              <span className="sr-only">Cart ({itemCount} items)</span>
+            {logoText}
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-2 lg:flex-1 lg:justify-end">
+          {/* Desktop Login */}
+          <Button asChild variant="ghost" size="sm" className={`hidden lg:flex ${textColorClass} ${hoverColorClass}`}>
+            <Link href="/auth/login">
+              <LogIn className="h-4 w-4 mr-2" />
+              {loginLabel}
             </Link>
           </Button>
 
+          {/* Desktop Cart */}
           <Button
-            asChild
             variant="ghost"
-            className={shouldUseTransparentHeader ? "text-secondary hover:text-secondary hover:bg-secondary/10" : ""}
+            size="icon"
+            className={`hidden lg:flex relative ${textColorClass} ${hoverColorClass}`}
+            onClick={() => setIsCartOpen(true)}
           >
-            <Link href="/auth/login">{loginLabel}</Link>
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                {itemCount}
+              </span>
+            )}
+            <span className="sr-only">Cart ({itemCount} items)</span>
           </Button>
+
+          <div className="lg:hidden">
+            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className={`relative ${textColorClass}`}>
+                  <ShoppingCart className="h-6 w-6" />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                      {itemCount}
+                    </span>
+                  )}
+                  <span className="sr-only">Cart</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-lg">
+                <SheetHeader>
+                  <SheetTitle>Shopping Cart</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8">
+                  <CartItems />
+                </div>
+                <div className="mt-6 pt-6 border-t">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full bg-transparent"
+                    onClick={() => setIsCartOpen(false)}
+                  >
+                    <Link href="/auth/login">
+                      <LogIn className="h-4 w-4 mr-2" />
+                      {loginLabel}
+                    </Link>
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
+
+        <Sheet open={isCartOpen && window.innerWidth >= 1024} onOpenChange={setIsCartOpen}>
+          <SheetContent side="right" className="w-full sm:max-w-lg">
+            <SheetHeader>
+              <SheetTitle>Shopping Cart</SheetTitle>
+            </SheetHeader>
+            <div className="mt-8">
+              <CartItems />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   )

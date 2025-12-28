@@ -32,7 +32,14 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
     },
     textMarquee,
     productsSection,
-    productOfTheMonth,
+    productOfTheMonth {
+      enabled,
+      badgeText,
+      title,
+      productHandle,
+      descriptionOverride,
+      buttonText
+    },
     testimonialsSection {
       enabled,
       title,
