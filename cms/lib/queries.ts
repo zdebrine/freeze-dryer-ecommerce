@@ -21,6 +21,15 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
       subheadline,
       ctas
     },
+    collectionsSection {
+      title,
+      collections[] {
+        title,
+        collectionHandle,
+        "imageUrl": image.asset->url
+      }
+    },
+    textMarquee,
     productsSection,
     productOfTheMonth,
     testimonialsSection {
@@ -29,6 +38,22 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
       subtitle,
       backgroundColor,
       testimonials
+    },
+    collectionsSection2 {
+      enabled,
+      title,
+      collections[] {
+        title,
+        collectionHandle,
+        "imageUrl": image.asset->url
+      }
+    },
+    imageBanner {
+      enabled,
+      "imageUrl": image.asset->url,
+      overlayText,
+      link,
+      textPosition
     },
     ctaBox{
       ctaText,
