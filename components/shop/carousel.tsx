@@ -124,7 +124,7 @@ export function Carousel({ children, visibleItems = 4, mobileVisibleItems = 2, g
         }}
       >
         <div
-          className="flex"
+          className="flex pb-4"
           style={{
             gap: `${gap}px`,
           }}

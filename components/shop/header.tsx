@@ -36,7 +36,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   }, [cart, itemCount])
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    const handleScroll = () => setIsScrolled(window.scrollY > 150)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])

@@ -20,8 +20,6 @@ type TestimonialsProps = {
 }
 
 export function Testimonials({ config }: TestimonialsProps) {
-  console.log("[v0] Testimonials config:", config)
-  console.log("[v0] Testimonials array:", config?.testimonials)
 
   // Use Sanity data if available, otherwise use defaults
   const testimonials = config?.testimonials || []

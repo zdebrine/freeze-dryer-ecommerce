@@ -47,7 +47,7 @@ export function CollectionBoxes({ title, collections, visibleItems = 4 }: Collec
                   )}
                   <div className="absolute inset-0 bg-black/5 " />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-base font-bold tracking-wide font-calsans uppercase text-center md:text-lg">{collection.title}</h3>
+                    <h3 className="text-base font-bold tracking-wide font-calsans uppercase text-center text-sm md:text-lg">{collection.title}</h3>
                   </div>
                 </div>
               </Card>
