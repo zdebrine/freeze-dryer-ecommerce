@@ -21,5 +21,5 @@ const config = defineConfig({
 // Named export
 export { config }
 
-// Default export - explicitly set as the config constant
+// Default export
 export default config
