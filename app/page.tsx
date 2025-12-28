@@ -76,8 +76,6 @@ export default async function HomePage() {
   const testimonialsConfig = landing?.testimonialsSection
   const footerConfig = landing?.footer
 
-  console.log(productOfTheMonthConfig)
-
   return (
     <div className="flex min-h-screen flex-col">
       <ShopHeader config={landing?.header} />
