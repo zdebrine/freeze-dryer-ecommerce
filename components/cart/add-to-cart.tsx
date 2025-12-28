@@ -16,7 +16,7 @@ export function AddToCart({ variant, productTitle, disabled }: AddToCartProps) {
 
   const handleAddToCart = async () => {
     if (!variant) return
-    await addItem(variant)
+    await addItem(variant, true)
   }
 
   const isDisabled = disabled || !variant || isLoading

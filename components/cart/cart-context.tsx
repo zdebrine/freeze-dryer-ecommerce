@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 type CartContextType = {
   cart: ShopifyCart | null
   itemCount: number
-  addItem: (variant: ProductVariant) => Promise<void>
+  addItem: (variant: ProductVariant, openCart?: boolean) => Promise<void>
   removeItem: (lineId: string) => Promise<void>
   updateItem: (lineId: string, quantity: number) => Promise<void>
   refreshCart: () => Promise<void>
@@ -25,9 +25,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const itemCount = cart?.lines.edges.reduce((total, { node }) => total + node.quantity, 0) ?? 0
 
   const refreshCart = async () => {
-    console.log("[v0] Refreshing cart...")
     const cartData = await getCartData()
-    console.log("[v0] Cart data received:", cartData?.lines.edges.length ?? 0, "line items")
     setCart(cartData)
   }
 
@@ -35,17 +33,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     refreshCart()
   }, [])
 
-  const addItemToCart = async (variant: ProductVariant) => {
+  const addItemToCart = async (variant: ProductVariant, openCart = false) => {
     startTransition(async () => {
       try {
-        console.log("[v0] Adding item to cart:", variant.id)
         const updatedCart = await addItem(variant.id, 1)
-        console.log("[v0] Updated cart received with", updatedCart.lines.edges.length, "line items")
         setCart(updatedCart)
-        toast({
-          title: "Added to cart",
-          description: `${variant.title} has been added to your cart.`,
-        })
+
+        if (openCart) {
+          window.dispatchEvent(new CustomEvent("openCart"))
+        }
       } catch (error) {
         console.error("[v0] Error adding item to cart:", error)
         toast({

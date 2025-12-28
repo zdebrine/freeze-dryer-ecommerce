@@ -32,13 +32,24 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const { itemCount, cart } = useCart()
 
   useEffect(() => {
-    console.log("[v0] Header - Cart updated:", cart?.lines.edges.length ?? 0, "items, itemCount:", itemCount)
-  }, [cart, itemCount])
+    const checkScroll = () => {
+      setIsScrolled(window.scrollY > 150)
+    }
+
+    // Set initial state based on current scroll position
+    checkScroll()
+
+    window.addEventListener("scroll", checkScroll)
+    return () => window.removeEventListener("scroll", checkScroll)
+  }, [])
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 150)
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    const handleOpenCart = () => {
+      setIsCartOpen(true)
+    }
+
+    window.addEventListener("openCart", handleOpenCart)
+    return () => window.removeEventListener("openCart", handleOpenCart)
   }, [])
 
   const isHomePage = pathname === "/" || pathname === "/instant-processing"
@@ -55,16 +66,12 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const loginLabel = config?.loginLabel ?? "Login"
 
   const textColorClass = shouldUseTransparentHeader ? "text-secondary" : "text-secondary"
-  const hoverColorClass = shouldUseTransparentHeader
-    ? "hover:text-primary/80"
-    : "hover:text-secondary"
+  const hoverColorClass = shouldUseTransparentHeader ? "hover:text-primary/80" : "hover:text-secondary"
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        shouldUseTransparentHeader
-          ? "bg-transparent border-secondary/10"
-          : "bg-primary/95 backdrop-blur-sm"
+        shouldUseTransparentHeader ? "bg-transparent border-secondary/10" : "bg-primary/95 backdrop-blur-sm"
       }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
