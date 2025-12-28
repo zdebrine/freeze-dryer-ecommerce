@@ -23,6 +23,7 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
     },
     collectionsSection {
       title,
+      visibleItems,
       collections[] {
         title,
         collectionHandle,
@@ -39,14 +40,12 @@ export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
       backgroundColor,
       testimonials
     },
-    collectionsSection2 {
+    secondProductsSection {
       enabled,
       title,
-      collections[] {
-        title,
-        collectionHandle,
-        "imageUrl": image.asset->url
-      }
+      collectionHandle,
+      visibleItems,
+      limit
     },
     imageBanner {
       enabled,
