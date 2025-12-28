@@ -70,12 +70,15 @@ export function ProductClient({ product }: ProductClientProps) {
           <span className="text-muted-foreground">{currentPrice.currencyCode}</span>
         </div>
 
-        <div className="prose prose-sm max-w-none">
-          <p className="text-lg text-muted-foreground">
-            {product.description ||
-              "Premium freeze-dried instant coffee crafted for convenience without compromising on taste."}
-          </p>
-        </div>
+        <div
+          className="prose prose-sm max-w-none text-lg text-muted-foreground [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:list-decimal [&>ol]:pl-6 [&>h1]:text-2xl [&>h2]:text-xl [&>h3]:text-lg [&>strong]:font-semibold"
+          dangerouslySetInnerHTML={{
+            __html:
+              product.descriptionHtml ||
+              product.description ||
+              "Premium freeze-dried instant coffee crafted for convenience without compromising on taste.",
+          }}
+        />
 
         <VariantSelector options={product.options} variants={product.variants} onVariantChange={setSelectedVariant} />
 
