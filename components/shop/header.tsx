@@ -54,17 +54,17 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
       ]
   const loginLabel = config?.loginLabel ?? "Login"
 
-  const textColorClass = shouldUseTransparentHeader ? "text-secondary" : "text-foreground"
+  const textColorClass = shouldUseTransparentHeader ? "text-secondary" : "text-secondary"
   const hoverColorClass = shouldUseTransparentHeader
-    ? "hover:text-secondary/80 hover:bg-secondary/10"
-    : "hover:text-primary hover:bg-primary/10"
+    ? "hover:text-primary/80"
+    : "hover:text-secondary"
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         shouldUseTransparentHeader
-          ? "bg-transparent border-b border-secondary/10"
-          : "bg-background/95 backdrop-blur-sm border-b"
+          ? "bg-transparent border-secondary/10"
+          : "bg-primary/95 backdrop-blur-sm"
       }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -78,7 +78,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
               <Link
                 key={`${l.label}-${l.href}-${idx}`}
                 {...(linkProps as any)}
-                className={`text-sm font-medium transition-colors ${textColorClass} ${hoverColorClass}`}
+                className={`text-sm font-bold font-calsans uppercase tracking-wide transition-colors ${textColorClass} ${hoverColorClass}`}
               >
                 {l.label}
               </Link>
@@ -98,7 +98,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-4 mt-8">
+              <nav className="flex flex-col gap-4 mt-8 ml-4">
                 {navLinks.map((l, idx) => {
                   const linkProps = isExternalUrl(l.href)
                     ? { href: l.href, target: "_blank", rel: "noreferrer" }
@@ -108,7 +108,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
                     <Link
                       key={`mobile-${l.label}-${l.href}-${idx}`}
                       {...(linkProps as any)}
-                      className="text-lg font-medium transition-colors hover:text-primary"
+                      className="text-lg font-bold transition-colors hover:text-primary"
                       onClick={() => setIsNavOpen(false)}
                     >
                       {l.label}
@@ -122,8 +122,8 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
 
         <Link href="/" className="flex items-center gap-2 lg:flex-1 lg:justify-center">
           <span
-            className={`text-3xl font-hero transition-colors ${
-              shouldUseTransparentHeader ? "text-secondary" : "text-primary"
+            className={`text-4xl font-hero transition-colors ${
+              shouldUseTransparentHeader ? "text-secondary" : "text-secondary"
             }`}
           >
             {logoText}
@@ -149,14 +149,14 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
               >
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">
                     {itemCount}
                   </span>
                 )}
                 <span className="sr-only">Cart ({itemCount} items)</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-lg">
+            <SheetContent side="right" className="w-full sm:max-w-lg overflow-scroll">
               <SheetHeader>
                 <SheetTitle>Shopping Cart</SheetTitle>
               </SheetHeader>
@@ -173,14 +173,14 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
                 <Button variant="ghost" size="icon" className={`relative ${textColorClass}`}>
                   <ShoppingCart className="h-6 w-6" />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">
                       {itemCount}
                     </span>
                   )}
                   <span className="sr-only">Cart</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-lg">
+              <SheetContent side="right" className="w-full sm:max-w-lg overflow-scroll">
                 <SheetHeader>
                   <SheetTitle>Shopping Cart</SheetTitle>
                 </SheetHeader>

@@ -43,10 +43,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       <ShopHeader config={landing?.header} />
 
       {/* Collection Header */}
-      <section className="border-t bg-background px-4 py-10 md:py-20">
+      <section className="border-t bg-background px-4 pt-30 pb-0 md:pt-40 md:pb-20">
         <div className="container mx-auto max-w-7xl">
-          <div className="mb-8 text-center md:mb-12">
-            <h1 className="font-calsans text-5xl font-extrabold uppercase tracking-tight md:text-8xl">
+          <div className="mb-8 text-center md:mb-0">
+            <h1 className="font-calsans text-5xl font-extrabold uppercase md:text-8xl">
               {collectionTitle}
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
