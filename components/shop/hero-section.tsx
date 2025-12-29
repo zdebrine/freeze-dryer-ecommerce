@@ -55,7 +55,7 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
       ]
 
   return (
-    <section className="relative flex h-[80vh] md:h-[80vh] items-center justify-center overflow-hidden">
+    <section className="relative flex h-[80vh] md:h-[85vh] items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         {backgroundType === "image" ? (
