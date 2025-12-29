@@ -6,6 +6,8 @@ import { ProductClient } from "./product-client"
 import { client } from "@/cms/lib/client"
 import { LANDING_PAGE_QUERY } from "@/cms/lib/queries"
 
+export const revalidate = 60
+
 type ProductPageProps = {
   params: Promise<{ handle: string }>
 }
