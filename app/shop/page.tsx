@@ -23,7 +23,7 @@ export default async function ShopAllPage({ searchParams }: { searchParams: Sear
 
   const [landing, { products, hasNextPage, endCursor }, filters] = await Promise.all([
     client.fetch(LANDING_PAGE_QUERY),
-    getAllProducts(undefined, 24),
+    getAllProducts(undefined, 50),
     getProductFilters(),
   ])
 

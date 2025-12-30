@@ -11,7 +11,6 @@ export function WebVitals() {
       id: metric.id,
     })
 
-    // Send to analytics endpoint
     const body = JSON.stringify({
       name: metric.name,
       value: metric.value,
@@ -20,8 +19,6 @@ export function WebVitals() {
       label: metric.label,
     })
 
-    // You can send this to your analytics service
-    // For now, we're using Vercel Analytics which automatically captures these
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/api/analytics/vitals", body)
     } else {

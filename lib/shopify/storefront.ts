@@ -1,10 +1,3 @@
-/**
- * Shopify Storefront API - Server-Side Only
- *
- * All Shopify API calls are now server-side only for better security.
- * Uses server-side environment variables that are never exposed to the client.
- */
-
 import "server-only"
 
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_NAME
@@ -186,7 +179,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
       query,
       variables,
     }),
-    next: { revalidate: 60 }, // Revalidate every minute for product updates
+    next: { revalidate: 60 },
   })
 
   if (!response.ok) {

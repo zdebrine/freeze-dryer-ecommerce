@@ -91,8 +91,14 @@ export function ShopAllClient({
 
   const sortedProducts = useMemo(() => {
     const products = [...filteredProducts]
+    console.log(products)
 
     switch (sortBy) {
+      case "featured":
+        return [...products].sort(
+          (a, b) =>
+            Number(b.tags ?.includes("Featured")) - Number(a.tags ?.includes("Featured"))
+        )
       case "price-asc":
         return products.sort(
           (a, b) =>
@@ -218,7 +224,7 @@ export function ShopAllClient({
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+              <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto px-8">
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
@@ -367,13 +373,13 @@ export function ShopAllClient({
         ) : sortedProducts.length > 0 ? (
           <ProductGrid products={sortedProducts} />
         ) : (
-          <div className="py-12 text-center">
-            <p className="text-lg text-muted-foreground">No products found matching your filters.</p>
-            <Button onClick={clearFilters} variant="outline" className="mt-4 bg-transparent">
-              Clear filters
+              <div className="py-12 text-center">
+                <p className="text-lg text-muted-foreground">No products found matching your filters.</p>
+                <Button onClick={clearFilters} variant="outline" className="mt-4 bg-transparent">
+                  Clear filters
             </Button>
-          </div>
-        )}
+              </div>
+            )}
       </div>
     </>
   )
