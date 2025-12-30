@@ -91,7 +91,6 @@ export function ShopAllClient({
 
   const sortedProducts = useMemo(() => {
     const products = [...filteredProducts]
-    console.log(products)
 
     switch (sortBy) {
       case "featured":
