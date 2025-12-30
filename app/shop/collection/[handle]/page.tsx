@@ -42,24 +42,24 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     <div className="flex min-h-screen flex-col">
       <ShopHeader config={landing?.header} />
 
-      {/* Collection Header */}
-      <section className="border-t bg-background px-4 pt-30 pb-0 md:pt-40 md:pb-20">
-        <div className="container mx-auto max-w-7xl">
-          <div className="mb-8 text-center md:mb-0">
-            <h1 className="font-calsans text-5xl font-extrabold uppercase md:text-8xl">
-              {collectionTitle}
-            </h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {products.length} {products.length === 1 ? "product" : "products"}
-            </p>
+      <main>
+        {/* Collection Header */}
+        <section className="border-t bg-background px-4 pt-30 pb-0 md:pt-40 md:pb-20">
+          <div className="container mx-auto max-w-7xl">
+            <div className="mb-8 text-center md:mb-0">
+              <h1 className="font-calsans text-5xl font-extrabold uppercase md:text-8xl">{collectionTitle}</h1>
+              <p className="mt-4 text-lg text-muted-foreground">
+                {products.length} {products.length === 1 ? "product" : "products"}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Products Grid */}
-      <div className="px-4 pb-20 md:px-16">
-        <ProductGrid products={products} />
-      </div>
+        {/* Products Grid */}
+        <div className="px-4 pb-20 md:px-16">
+          <ProductGrid products={products} />
+        </div>
+      </main>
 
       <ShopFooter config={footerConfig} />
     </div>

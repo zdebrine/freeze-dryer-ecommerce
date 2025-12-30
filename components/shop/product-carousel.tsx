@@ -33,9 +33,7 @@ export function ProductCarousel({ title, products, visibleItems = 3 }: ProductCa
   return (
     <section className="bg-background px-4 py-12 md:px-8 md:pb-40">
       <div className="container mx-auto max-w-7xl">
-        {title && (
-          <h2 className="mb-6 text-2xl font-bold font-calsans uppercase md:mb-8 md:text-4xl">{title}</h2>
-        )}
+        {title && <h3 className="mb-6 text-2xl font-bold font-calsans uppercase md:mb-8 md:text-4xl">{title}</h3>}
 
         <Carousel visibleItems={visibleItems} mobileVisibleItems={2} gap={16}>
           {products.map((product) => {
@@ -71,7 +69,7 @@ export function ProductCarousel({ title, products, visibleItems = 3 }: ProductCa
                         <StarRating rating={rating} count={reviewCount} />
                       ) : null}
 
-                      <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">{product.title}</h3>
+                      <p className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">{product.title}</p>
 
                       <p className="mt-1 text-sm font-medium">${Number.parseFloat(price.amount).toFixed(2)}</p>
                     </div>

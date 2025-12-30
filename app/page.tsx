@@ -82,58 +82,61 @@ export default async function HomePage() {
 
       <HeroSection config={landing?.hero} />
 
-      {/* Shopify Setup Notice - Only show if not configured */}
-      {!isShopifyConfigured && <ShopifySetupNotice />}
+      <main>
+        {/* Shopify Setup Notice - Only show if not configured */}
+        {!isShopifyConfigured && <ShopifySetupNotice />}
 
-      {landing?.collectionsSection?.collections && (
-        <CollectionBoxes
-          title={landing.collectionsSection.title}
-          collections={landing.collectionsSection.collections}
-          visibleItems={landing.collectionsSection.visibleItems}
-        />
-      )}
+        {landing?.collectionsSection?.collections && (
+          <CollectionBoxes
+            title={landing.collectionsSection.title}
+            collections={landing.collectionsSection.collections}
+            visibleItems={landing.collectionsSection.visibleItems}
+          />
+        )}
 
-      {landing?.textMarquee?.enabled !== false && landing?.textMarquee?.text && (
-        <TextMarquee text={landing.textMarquee.text} speed={landing.textMarquee.speed} />
-      )}
+        {landing?.textMarquee?.enabled !== false && landing?.textMarquee?.text && (
+          <TextMarquee text={landing.textMarquee.text} speed={landing.textMarquee.speed} />
+        )}
 
-      {/* Product Grid */}
-      <section id={productsAnchorId} className="border-t bg-background px-4 pt-6 md:pt-10 md:px-8">
-        <div className="mx-auto">
-          <div className="mb-4 text-center md:mb-12 md:px-16">
-            <h2 className="font-calsans text-4xl font-extrabold uppercase tracking-tight md:text-8xl">
-              {productsTitle}
-            </h2>
+        {/* Product Grid */}
+        <section id={productsAnchorId} className="border-t bg-background px-4 pt-6 md:pt-10 md:px-8">
+          <div className="mx-auto">
+            <div className="mb-4 text-center md:mb-12 md:px-16">
+              <h2 className="font-calsans text-4xl font-extrabold uppercase tracking-tight md:text-8xl">
+                {productsTitle}
+              </h2>
+            </div>
           </div>
+        </section>
+        <div className="px-4 pb-12 md:px-16 md:pb-20">
+          <ProductGrid products={products} />
         </div>
-      </section>
-      <div className="px-4 pb-12 md:px-16 md:pb-20">
-        <ProductGrid products={products} />
-      </div>
 
-      {testimonialsConfig?.enabled !== false && <Testimonials config={testimonialsConfig} />}
+        {testimonialsConfig?.enabled !== false && <Testimonials config={testimonialsConfig} />}
 
-      {landing?.secondProductsSection?.enabled !== false && secondSectionProducts.length > 0 && (
-        <ProductCarousel
-          title={landing.secondProductsSection.title}
-          products={secondSectionProducts}
-          visibleItems={landing.secondProductsSection.visibleItems}
-        />
-      )}
+        {landing?.secondProductsSection?.enabled !== false && secondSectionProducts.length > 0 && (
+          <ProductCarousel
+            title={landing.secondProductsSection.title}
+            products={secondSectionProducts}
+            visibleItems={landing.secondProductsSection.visibleItems}
+          />
+        )}
 
-      {landing?.imageBanner?.enabled !== false && landing?.imageBanner?.imageUrl && (
-        <ImageBanner
-          imageUrl={landing.imageBanner.imageUrl}
-          overlayText={landing.imageBanner.overlayText || ""}
-          link={landing.imageBanner.link || "#"}
-          textPosition={landing.imageBanner.textPosition}
-        />
-      )}
+        {landing?.imageBanner?.enabled !== false && landing?.imageBanner?.imageUrl && (
+          <ImageBanner
+            imageUrl={landing.imageBanner.imageUrl}
+            overlayText={landing.imageBanner.overlayText || ""}
+            link={landing.imageBanner.link || "#"}
+            textPosition={landing.imageBanner.textPosition}
+          />
+        )}
 
-      {isShopifyConfigured && productOfTheMonthConfig?.enabled !== false && productOfTheMonthProduct && (
-        <ProductOfTheMonth product={productOfTheMonthProduct} config={productOfTheMonthConfig} />
-      )}
-      <Cta config={landing?.ctaBox} />
+        {isShopifyConfigured && productOfTheMonthConfig?.enabled !== false && productOfTheMonthProduct && (
+          <ProductOfTheMonth product={productOfTheMonthProduct} config={productOfTheMonthConfig} />
+        )}
+
+        <Cta config={landing?.ctaBox} />
+      </main>
 
       {/* Footer */}
       <ShopFooter config={footerConfig} />

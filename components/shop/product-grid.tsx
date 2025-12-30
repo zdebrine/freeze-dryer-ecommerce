@@ -16,12 +16,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
     <div className="flex items-center gap-2 text-xs text-muted-foreground">
       <div className="flex items-center gap-0.5">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Star
-            key={i}
-            className="h-3.5 w-3.5"
-            fill={i < filled ? "currentColor" : "none"}
-            aria-hidden="true"
-          />
+          <Star key={i} className="h-3.5 w-3.5" fill={i < filled ? "currentColor" : "none"} aria-hidden="true" />
         ))}
       </div>
       <span>({count} reviews)</span>
@@ -49,10 +44,7 @@ export function ProductGrid({ products }: ProductGridProps) {
         const reviewCount = (product as any).reviewCount as number | undefined
 
         return (
-          <Card
-            key={product.id}
-            className="group border-0 bg-transparent shadow-none"
-          >
+          <Card key={product.id} className="group border-0 bg-transparent shadow-none">
             <div className="relative">
               {/* Main clickable area */}
               <Link href={`/products/${product.handle}`} className="block">
@@ -84,13 +76,9 @@ export function ProductGrid({ products }: ProductGridProps) {
                     <StarRating rating={rating} count={reviewCount} />
                   ) : null}
 
-                  <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">
-                    {product.title}
-                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">{product.title}</p>
 
-                  <p className="mt-1 text-sm font-medium">
-                    ${Number.parseFloat(price.amount).toFixed(2)}
-                  </p>
+                  <p className="mt-1 text-sm font-medium">${Number.parseFloat(price.amount).toFixed(2)}</p>
                 </div>
               </Link>
 

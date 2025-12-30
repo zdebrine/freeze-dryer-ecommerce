@@ -39,13 +39,11 @@ export function Cta({ config }: { config?: CtaConfig }) {
           <div className="relative grid grid-cols-1 md:grid-cols-2">
             {/* left: copy + button */}
             <div className="flex flex-col items-center justify-center px-6 py-12 text-center md:px-12 md:py-16">
-              <h2 className="text-balance font-calsans font-bold text-4xl text-secondary drop-shadow-sm sm:text-5xl lg:text-5xl uppercase">
+              <h3 className="text-balance font-calsans font-bold text-4xl text-secondary drop-shadow-sm sm:text-5xl lg:text-5xl uppercase">
                 {headline}
-              </h2>
+              </h3>
 
-              <p className="mt-6 max-w-xl text-pretty text-sm text-white/80 sm:text-base">
-                {subText}
-              </p>
+              <p className="mt-6 max-w-xl text-pretty text-sm text-white/80 sm:text-base">{subText}</p>
 
               <div className="mt-8">
                 <Button
@@ -61,7 +59,7 @@ export function Cta({ config }: { config?: CtaConfig }) {
             <div className="relative min-h-[240px] md:min-h-[420px]">
               {imageUrl ? (
                 <Image
-                  src={imageUrl}
+                  src={imageUrl || "/placeholder.svg"}
                   alt={imageAlt}
                   fill
                   className="object-cover object-center"

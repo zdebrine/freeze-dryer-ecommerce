@@ -181,7 +181,7 @@ export function ProductClient({ product }: ProductClientProps) {
         <AddToCart variant={selectedVariant} productTitle={product.title} disabled={!product.availableForSale} />
 
         <div className="space-y-4">
-          <h3 className="font-semibold">Features:</h3>
+          <h2 className="font-semibold text-lg">Features:</h2>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li>✓ Freeze-dried to preserve flavor and aroma</li>
             <li>✓ Quick and convenient preparation</li>
@@ -192,7 +192,7 @@ export function ProductClient({ product }: ProductClientProps) {
         </div>
 
         <div className="rounded-lg bg-muted p-4 text-sm">
-          <p className="font-semibold mb-2">How to Prepare:</p>
+          <h2 className="font-semibold mb-2 text-base">How to Prepare:</h2>
           <ol className="space-y-1 text-muted-foreground">
             <li>1. Add one packet to 8oz hot water</li>
             <li>2. Stir until dissolved</li>

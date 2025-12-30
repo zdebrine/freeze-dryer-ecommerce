@@ -1,7 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { ArrowRight } from "lucide-react"
 import type { ShopifyProduct } from "@/lib/shopify/storefront"
 
@@ -13,7 +12,6 @@ type Config = {
 }
 
 export function ProductOfTheMonth({ product, config }: { product: ShopifyProduct | null; config?: Config }) {
-  
   if (!product) return null
 
   const image = product.images.edges[0]?.node
@@ -23,9 +21,9 @@ export function ProductOfTheMonth({ product, config }: { product: ShopifyProduct
     <section className="border-t bg-background px-4 py-20">
       <div className="container mx-auto max-w-7xl">
         <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold font-calsans uppercase sm:text-5xl">
+          <h3 className="text-4xl font-bold font-calsans uppercase sm:text-5xl">
             {config?.title ?? "Product of the Month"}
-          </h2>
+          </h3>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 items-center">
@@ -46,7 +44,7 @@ export function ProductOfTheMonth({ product, config }: { product: ShopifyProduct
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold font-calsans uppercase sm:text-4xl">{product.title}</h3>
+            <p className="text-3xl font-bold font-calsans uppercase sm:text-4xl">{product.title}</p>
             <p className="text-lg text-muted-foreground">
               {config?.descriptionOverride || product.description || "Featured product description goes here."}
             </p>

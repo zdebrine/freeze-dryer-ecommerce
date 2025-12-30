@@ -20,7 +20,6 @@ type TestimonialsProps = {
 }
 
 export function Testimonials({ config }: TestimonialsProps) {
-
   // Use Sanity data if available, otherwise use defaults
   const testimonials = config?.testimonials || []
   const title = config?.title || "Word on the street"
@@ -47,9 +46,9 @@ export function Testimonials({ config }: TestimonialsProps) {
 
       <div className="relative container mx-auto max-w-7xl py-12 sm:py-56">
         <div className="mb-8 text-center md:mb-10">
-          <h2 className="font-calsans text-3xl font-bold uppercase tracking-tight text-secondary sm:text-5xl">
+          <h3 className="font-calsans text-3xl font-bold uppercase tracking-tight text-secondary sm:text-5xl">
             {title}
-          </h2>
+          </h3>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
