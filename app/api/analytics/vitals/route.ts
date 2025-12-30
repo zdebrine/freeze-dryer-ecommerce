@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { name, value, rating, id, label } = body
 
-    // Log the web vital metric
     console.log("[Analytics] Web Vital:", {
       name,
       value,
@@ -14,13 +13,6 @@ export async function POST(request: NextRequest) {
       label,
       timestamp: new Date().toISOString(),
     })
-
-    // Here you could send this data to your analytics service
-    // Examples:
-    // - Google Analytics
-    // - Mixpanel
-    // - Custom analytics endpoint
-    // - Database storage
 
     return NextResponse.json({ success: true })
   } catch (error) {

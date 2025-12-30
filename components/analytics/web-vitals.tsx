@@ -4,8 +4,7 @@ import { useReportWebVitals } from "next/web-vitals"
 
 export function WebVitals() {
   useReportWebVitals((metric) => {
-    // Log web vitals to console for debugging
-    console.log("[v0] Web Vital:", {
+    console.log("Web Vital:", {
       name: metric.name,
       value: metric.value,
       rating: metric.rating,
