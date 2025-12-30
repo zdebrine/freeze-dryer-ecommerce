@@ -336,6 +336,20 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
           id
           title
           handle
+          metafields(identifiers: [
+            { namespace: "custom", key: "one_liner" }
+            { namespace: "custom", key: "funkiness" }
+            { namespace: "custom", key: "nuttiness" }
+            { namespace: "custom", key: "frutiness" }
+            { namespace: "custom", key: "roast_level" }
+            { namespace: "custom", key: "ingredients" }
+            { namespace: "custom", key: "price_transparency" }
+          ]) {
+            namespace
+            key
+            type
+            value
+          }
           description
           descriptionHtml
           availableForSale

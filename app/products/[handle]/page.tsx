@@ -23,6 +23,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
+  const oneLiner = product ?.metafields ?.find(metafield => metafield ?.key === "one_liner") || null;
+
   return (
     <div className="flex min-h-screen flex-col">
       <ShopHeader config={landing?.header} />
@@ -32,7 +34,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ProductClient product={product} />
         </div>
       </main>
-
+      {oneLiner?.value && (
+        <div className="bg-primary p-4 py-16 flex-col center mb-16">
+          <h1 className="text-4xl text-center font-bold text-secondary tracking-wide uppercase md:text-7xl font-calsans">{oneLiner.value}</h1>
+        </div>
+      )}
       <ShopFooter config={landing?.footer} />
     </div>
   )
