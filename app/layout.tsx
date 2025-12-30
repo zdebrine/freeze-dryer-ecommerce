@@ -49,8 +49,8 @@ const calsans = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "mernin' Coffee: Instant",
-  description: "Instant coffee processor",
+  title: "Mernin' Coffee",
+  description: "Small batch premium coffee",
   generator: "v0.app",
 }
 
