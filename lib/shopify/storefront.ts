@@ -62,6 +62,10 @@ export type ShopifyProduct = {
       amount: string
       currencyCode: string
     }
+    maxVariantPrice?: {
+      amount: string
+      currencyCode: string
+    }
   }
   images: {
     edges: Array<{
@@ -74,6 +78,9 @@ export type ShopifyProduct = {
   availableForSale: boolean
   options: ProductOption[]
   variants: ProductVariant[]
+  productType?: string
+  vendor?: string
+  tags?: string[]
 }
 
 export type ShopifyCartLine = {
@@ -806,4 +813,178 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   const data = await shopifyFetch<{ cart: ShopifyCart | null }>(query, { cartId })
 
   return data.cart
+}
+
+export async function getAllProducts(
+  cursor?: string,
+  limit = 24,
+): Promise<{
+  products: ShopifyProduct[]
+  hasNextPage: boolean
+  endCursor: string | null
+}> {
+  try {
+    const query = `
+      query GetAllProducts($first: Int!, $after: String) {
+        products(first: $first, after: $after) {
+          edges {
+            node {
+              id
+              title
+              handle
+              description
+              descriptionHtml
+              availableForSale
+              productType
+              vendor
+              tags
+              options {
+                id
+                name
+                values
+              }
+              priceRange {
+                minVariantPrice {
+                  amount
+                  currencyCode
+                }
+                maxVariantPrice {
+                  amount
+                  currencyCode
+                }
+              }
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                    altText
+                  }
+                }
+              }
+              variants(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    availableForSale
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    selectedOptions {
+                      name
+                      value
+                    }
+                  }
+                }
+              }
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+    `
+
+    const variables = { first: limit, after: cursor }
+    const data = await shopifyFetch<{
+      products: {
+        edges: Array<{
+          node: ShopifyProduct & {
+            productType: string
+            vendor: string
+            tags: string[]
+            variants: { edges: Array<{ node: ProductVariant }> }
+          }
+        }>
+        pageInfo: { hasNextPage: boolean; endCursor: string | null }
+      }
+    }>(query, variables)
+
+    return {
+      products: data.products.edges.map((edge) => ({
+        ...edge.node,
+        variants: edge.node.variants.edges.map((v) => v.node),
+      })),
+      hasNextPage: data.products.pageInfo.hasNextPage,
+      endCursor: data.products.pageInfo.endCursor,
+    }
+  } catch (error) {
+    console.error("Failed to fetch all products from Shopify:", error)
+    return { products: [], hasNextPage: false, endCursor: null }
+  }
+}
+
+export async function getProductFilters(): Promise<{
+  productTypes: string[]
+  vendors: string[]
+  priceRange: { min: number; max: number }
+}> {
+  try {
+    const query = `
+      query GetProductFilters {
+        products(first: 250) {
+          edges {
+            node {
+              productType
+              vendor
+              priceRange {
+                minVariantPrice {
+                  amount
+                }
+                maxVariantPrice {
+                  amount
+                }
+              }
+            }
+          }
+        }
+      }
+    `
+
+    const data = await shopifyFetch<{
+      products: {
+        edges: Array<{
+          node: {
+            productType: string
+            vendor: string
+            priceRange: {
+              minVariantPrice: { amount: string }
+              maxVariantPrice: { amount: string }
+            }
+          }
+        }>
+      }
+    }>(query)
+
+    const productTypes = new Set<string>()
+    const vendors = new Set<string>()
+    let minPrice = Number.POSITIVE_INFINITY
+    let maxPrice = 0
+
+    data.products.edges.forEach((edge) => {
+      if (edge.node.productType) productTypes.add(edge.node.productType)
+      if (edge.node.vendor) vendors.add(edge.node.vendor)
+
+      const min = Number.parseFloat(edge.node.priceRange.minVariantPrice.amount)
+      const max = Number.parseFloat(edge.node.priceRange.maxVariantPrice.amount)
+
+      if (min < minPrice) minPrice = min
+      if (max > maxPrice) maxPrice = max
+    })
+
+    return {
+      productTypes: Array.from(productTypes).sort(),
+      vendors: Array.from(vendors).sort(),
+      priceRange: {
+        min: minPrice === Number.POSITIVE_INFINITY ? 0 : minPrice,
+        max: maxPrice || 100,
+      },
+    }
+  } catch (error) {
+    console.error("Failed to fetch product filters from Shopify:", error)
+    return { productTypes: [], vendors: [], priceRange: { min: 0, max: 100 } }
+  }
 }
