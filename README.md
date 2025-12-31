@@ -1,6 +1,6 @@
-# Freeze Dryer E-Commerce Platform
+# Next.js Coffee E-Commerce Platform
 
-A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, Sanity CMS, and Supabase for managing freeze-dryer products and custom order workflows.
+A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, Sanity CMS, and Supabase complete with an ecommerce storefront and b2b custom order flow app.
 
 ## Features
 
