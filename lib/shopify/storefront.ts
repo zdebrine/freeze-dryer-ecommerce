@@ -162,12 +162,22 @@ type ProductByHandleResponse = {
   } | null
 }
 
-async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+async function shopifyFetch<T>(
+  query: string,
+  variables?: Record<string, unknown>,
+  options?: { cache?: RequestCache; revalidate?: number | false },
+): Promise<T> {
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
     throw new Error(
       "Shopify configuration incomplete. Please set SHOPIFY_STORE_NAME and SHOPIFY_STOREFRONT_ACCESS_TOKEN environment variables.",
     )
   }
+
+  const cacheConfig = options?.cache
+    ? { cache: options.cache }
+    : options?.revalidate !== undefined
+      ? { next: { revalidate: options.revalidate } }
+      : { next: { revalidate: 60 } }
 
   const response = await fetch(SHOPIFY_GRAPHQL_ENDPOINT, {
     method: "POST",
@@ -179,7 +189,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
       query,
       variables,
     }),
-    next: { revalidate: 60 },
+    ...cacheConfig,
   })
 
   if (!response.ok) {
@@ -510,7 +520,7 @@ export async function createCart(): Promise<ShopifyCart> {
 
   const data = await shopifyFetch<{
     cartCreate: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
-  }>(query)
+  }>(query, {}, { cache: "no-store" })
 
   if (data.cartCreate.userErrors.length > 0) {
     throw new Error(data.cartCreate.userErrors[0].message)
@@ -588,10 +598,14 @@ export async function addCartLines(
 
   const data = await shopifyFetch<{
     cartLinesAdd: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
-  }>(query, {
-    cartId,
-    lines,
-  })
+  }>(
+    query,
+    {
+      cartId,
+      lines,
+    },
+    { cache: "no-store" },
+  )
 
   if (data.cartLinesAdd.userErrors.length > 0) {
     throw new Error(data.cartLinesAdd.userErrors[0].message)
@@ -669,10 +683,14 @@ export async function updateCartLines(
 
   const data = await shopifyFetch<{
     cartLinesUpdate: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
-  }>(query, {
-    cartId,
-    lines,
-  })
+  }>(
+    query,
+    {
+      cartId,
+      lines,
+    },
+    { cache: "no-store" },
+  )
 
   if (data.cartLinesUpdate.userErrors.length > 0) {
     throw new Error(data.cartLinesUpdate.userErrors[0].message)
@@ -747,10 +765,14 @@ export async function removeCartLines(cartId: string, lineIds: string[]): Promis
 
   const data = await shopifyFetch<{
     cartLinesRemove: { cart: ShopifyCart; userErrors: Array<{ field: string; message: string }> }
-  }>(query, {
-    cartId,
-    lineIds,
-  })
+  }>(
+    query,
+    {
+      cartId,
+      lineIds,
+    },
+    { cache: "no-store" },
+  )
 
   if (data.cartLinesRemove.userErrors.length > 0) {
     throw new Error(data.cartLinesRemove.userErrors[0].message)
@@ -817,7 +839,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
     }
   `
 
-  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(query, { cartId })
+  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(query, { cartId }, { cache: "no-store" })
 
   return data.cart
 }
