@@ -52,7 +52,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
     return () => window.removeEventListener("openCart", handleOpenCart)
   }, [])
 
-  const isHomePage = pathname === "/" || pathname === "/instant-processing"
+  const isHomePage = pathname === "/" || pathname === "/b2b"
   const shouldUseTransparentHeader = isHomePage && !isScrolled
 
   const logoText = config?.logoText ?? "mernin'"
@@ -60,7 +60,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
     ? config.navLinks
     : [
         { label: "Shop", href: "/#products" },
-        { label: "For Roasters", href: "/instant-processing" },
+        { label: "For Roasters", href: "/b2b" },
         { label: "About", href: "/#about" },
       ]
   const loginLabel = config?.loginLabel ?? "Login"

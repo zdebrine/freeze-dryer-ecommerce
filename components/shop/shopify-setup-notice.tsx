@@ -28,7 +28,7 @@ export function ShopifySetupNotice() {
             </div>
             <p className="mt-4 text-sm">
               In the meantime, you can still{" "}
-              <Link href="/instant-processing" className="font-medium underline">
+              <Link href="/b2b" className="font-medium underline">
                 submit orders for instant coffee processing
               </Link>
               .

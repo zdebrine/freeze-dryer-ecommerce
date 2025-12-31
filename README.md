@@ -146,7 +146,7 @@ A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, 
 - `/shop` - All products page with filtering
 - `/shop/collection/[handle]` - Collection pages
 - `/products/[handle]` - Product detail pages
-- `/instant-processing` - Custom freeze-drying info page
+- `/b2b` - B2B services and custom freeze-drying info page
 - `/cart` - Shopping cart page
 
 ### Authenticated Routes

@@ -114,3 +114,10 @@ export const INSTANT_PROCESSING_QUERY = `*[_type == "instantProcessing"][0]{
     "ctaImage": ctaImage.asset->url
   }
 }`
+
+export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
+  siteName,
+  siteDescription,
+  "faviconUrl": favicon.asset->url,
+  "appleTouchIconUrl": appleTouchIcon.asset->url
+}`

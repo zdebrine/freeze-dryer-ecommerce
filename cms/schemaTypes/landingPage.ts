@@ -24,7 +24,7 @@ export default defineType({
           of: [{ type: "navLink" }],
           initialValue: [
             { label: "Shop", href: "/#products" },
-            { label: "For Roasters", href: "/instant-processing" },
+            { label: "For Roasters", href: "/b2b" },
             { label: "About", href: "/#about" },
           ],
           validation: (r) => r.min(0).max(10),
@@ -140,7 +140,7 @@ export default defineType({
           of: [{ type: "cta" }],
           initialValue: [
             { label: "Shop Coffee", href: "/#products", variant: "primary" },
-            { label: "For Roasters", href: "/instant-processing", variant: "outline" },
+            { label: "For Roasters", href: "/b2b", variant: "outline" },
           ],
           validation: (r) => r.min(0).max(4),
         }),

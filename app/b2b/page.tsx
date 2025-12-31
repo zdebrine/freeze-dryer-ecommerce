@@ -7,13 +7,13 @@ import { OptimizedHeroVideo } from "@/components/ui/OptimizedHeroVideo"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { LogoMarquee } from "@/components/instant-processing/logo-marquee"
-import { ImageBanner } from "@/components/instant-processing/image-banner"
-import { HowItWorks } from "@/components/instant-processing/how-it-works"
+import { LogoMarquee } from "@/components/b2b/logo-marquee"
+import { ImageBanner } from "@/components/b2b/image-banner"
+import { HowItWorks } from "@/components/b2b/how-it-works"
 
 export const revalidate = 60
 
-export default async function InstantProcessingPage() {
+export default async function B2BPage() {
   // Fetch landing page data for header/footer
   const landing = await client.fetch(LANDING_PAGE_QUERY)
 

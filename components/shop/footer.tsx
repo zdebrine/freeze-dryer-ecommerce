@@ -26,35 +26,34 @@ function isExternalUrl(href: string) {
 export function ShopFooter({ config }: { config?: FooterConfig }) {
   const logoText = config?.logoText ?? "mernin'"
   const tagline = config?.tagline ?? "Premium instant coffee, freeze-dried to perfection."
-  const columns =
-    config?.columns?.length
-      ? config.columns
-      : [
-          {
-            title: "Shop",
-            links: [
-              { label: "All Products", href: "/#products" },
-              { label: "Best Sellers", href: "/#products" },
-              { label: "New Arrivals", href: "/#products" },
-            ],
-          },
-          {
-            title: "Company",
-            links: [
-              { label: "For Roasters", href: "/instant-processing" },
-              { label: "About Us", href: "/#about" },
-              { label: "Portal Login", href: "/auth/login" },
-            ],
-          },
-          {
-            title: "Support",
-            links: [
-              { label: "Contact Us", href: "#" },
-              { label: "Shipping Info", href: "#" },
-              { label: "Returns", href: "#" },
-            ],
-          },
-        ]
+  const columns = config?.columns?.length
+    ? config.columns
+    : [
+        {
+          title: "Shop",
+          links: [
+            { label: "All Products", href: "/#products" },
+            { label: "Best Sellers", href: "/#products" },
+            { label: "New Arrivals", href: "/#products" },
+          ],
+        },
+        {
+          title: "Company",
+          links: [
+            { label: "For Roasters", href: "/b2b" },
+            { label: "About Us", href: "/#about" },
+            { label: "Portal Login", href: "/auth/login" },
+          ],
+        },
+        {
+          title: "Support",
+          links: [
+            { label: "Contact Us", href: "#" },
+            { label: "Shipping Info", href: "#" },
+            { label: "Returns", href: "#" },
+          ],
+        },
+      ]
 
   const copyrightText = config?.copyrightText ?? "© 2025 mernin'. All rights reserved."
 

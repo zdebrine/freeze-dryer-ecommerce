@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity"
 
 export default defineType({
   name: "instantProcessing",
-  title: "Instant Processing Page",
+  title: "B2B Services Page",
   type: "document",
   fields: [
     // HERO VIDEO SECTION
@@ -231,7 +231,7 @@ export default defineType({
   ],
   preview: {
     prepare() {
-      return { title: "Instant Processing Page" }
+      return { title: "B2B Services Page" }
     },
   },
 })

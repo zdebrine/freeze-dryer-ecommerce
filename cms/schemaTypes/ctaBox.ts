@@ -39,7 +39,7 @@ export default defineType({
       name: "ctaLink",
       title: "Button Link",
       type: "string",
-      description: "Internal path like /#products or /instant-processing, or full URL",
+      description: "Internal path like /#products or /b2b, or full URL",
       validation: (r) => r.required(),
     }),
   ],

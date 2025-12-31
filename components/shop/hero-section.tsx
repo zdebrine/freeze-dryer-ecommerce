@@ -24,7 +24,6 @@ type HeroConfig = {
 function buttonVariant(v?: CTA["variant"]) {
   if (v === "outline") return "outline"
   if (v === "ghost") return "ghost"
-  // treat "secondary" as default unless you actually have a Button variant for it
   return "default"
 }
 
@@ -51,7 +50,7 @@ export function HeroSection({ config }: { config?: HeroConfig }) {
     ? config.ctas
     : [
         { label: "Shop Coffee", href: "/#products", variant: "primary" },
-        { label: "For Roasters", href: "/instant-processing", variant: "outline" },
+        { label: "For Roasters", href: "/b2b", variant: "outline" },
       ]
 
   return (
