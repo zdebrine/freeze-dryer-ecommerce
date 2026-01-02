@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition, useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef, useState, useTransition, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ProductGrid } from "@/components/shop/product-grid"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,6 @@ type ShopAllClientProps = {
     minPrice?: string
     maxPrice?: string
     sort?: string
-    page?: string
   }
 }
 
@@ -40,10 +39,11 @@ export function ShopAllClient({
   searchParams,
 }: ShopAllClientProps) {
   const router = useRouter()
-  const params = useSearchParams()
+  const urlParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
+  // URL-driven UI state
   const [searchQuery, setSearchQuery] = useState(searchParams.search || "")
   const [selectedType, setSelectedType] = useState(searchParams.type || "All types")
   const [selectedVendor, setSelectedVendor] = useState(searchParams.vendor || "All brands")
@@ -53,71 +53,38 @@ export function ShopAllClient({
   ])
   const [sortBy, setSortBy] = useState(searchParams.sort || "featured")
 
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
+  // The actual product list we render (grows with infinite scroll)
+  const [products, setProducts] = useState<ShopifyProduct[]>(initialProducts)
+  const [hasNextPage, setHasNextPage] = useState(initialHasNextPage)
+  const [endCursor, setEndCursor] = useState<string | null>(initialEndCursor)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
 
+  // When the server sends new initial results (filters changed), reset the list
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchQuery])
+    setProducts(initialProducts)
+    setHasNextPage(initialHasNextPage)
+    setEndCursor(initialEndCursor)
+  }, [initialProducts, initialHasNextPage, initialEndCursor])
 
-  const filteredProducts = useMemo(() => {
-    return initialProducts.filter((product) => {
-      // Search filter
-      if (debouncedSearch && !product.title.toLowerCase().includes(debouncedSearch.toLowerCase())) {
-        return false
-      }
+  // Keep UI controls in sync after navigation
+  useEffect(() => {
+    setSearchQuery(searchParams.search || "")
+    setSelectedType(searchParams.type || "All types")
+    setSelectedVendor(searchParams.vendor || "All brands")
+    setPriceRange([
+      Number.parseFloat(searchParams.minPrice || String(filters.priceRange.min)),
+      Number.parseFloat(searchParams.maxPrice || String(filters.priceRange.max)),
+    ])
+    setSortBy(searchParams.sort || "featured")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.search, searchParams.type, searchParams.vendor, searchParams.minPrice, searchParams.maxPrice, searchParams.sort])
 
-      // Type filter
-      if (selectedType !== "All types" && (product as any).productType !== selectedType) {
-        return false
-      }
-
-      // Vendor filter
-      if (selectedVendor !== "All brands" && (product as any).vendor !== selectedVendor) {
-        return false
-      }
-
-      // Price filter
-      const price = Number.parseFloat(product.priceRange.minVariantPrice.amount)
-      if (price < priceRange[0] || price > priceRange[1]) {
-        return false
-      }
-
-      return true
-    })
-  }, [initialProducts, debouncedSearch, selectedType, selectedVendor, priceRange])
-
-  const sortedProducts = useMemo(() => {
-    const products = [...filteredProducts]
-
-    switch (sortBy) {
-      case "featured":
-        return [...products].sort(
-          (a, b) =>
-            Number(b.tags ?.includes("Featured")) - Number(a.tags ?.includes("Featured"))
-        )
-      case "price-asc":
-        return products.sort(
-          (a, b) =>
-            Number.parseFloat(a.priceRange.minVariantPrice.amount) -
-            Number.parseFloat(b.priceRange.minVariantPrice.amount),
-        )
-      case "price-desc":
-        return products.sort(
-          (a, b) =>
-            Number.parseFloat(b.priceRange.minVariantPrice.amount) -
-            Number.parseFloat(a.priceRange.minVariantPrice.amount),
-        )
-      case "title-asc":
-        return products.sort((a, b) => a.title.localeCompare(b.title))
-      case "title-desc":
-        return products.sort((a, b) => b.title.localeCompare(a.title))
-      default:
-        return products
-    }
-  }, [filteredProducts, sortBy])
+  const activeFilterCount =
+    (searchQuery ? 1 : 0) +
+    (selectedType !== "All types" ? 1 : 0) +
+    (selectedVendor !== "All brands" ? 1 : 0) +
+    (priceRange[0] > filters.priceRange.min || priceRange[1] < filters.priceRange.max ? 1 : 0) +
+    (sortBy !== "featured" ? 1 : 0)
 
   const updateURL = () => {
     const newParams = new URLSearchParams()
@@ -133,7 +100,6 @@ export function ShopAllClient({
     startTransition(() => {
       router.push(queryString ? `/shop?${queryString}` : "/shop", { scroll: false })
     })
-
     setIsFilterOpen(false)
   }
 
@@ -148,12 +114,52 @@ export function ShopAllClient({
     })
   }
 
-  const activeFilterCount =
-    (searchQuery ? 1 : 0) +
-    (selectedType !== "All types" ? 1 : 0) +
-    (selectedVendor !== "All brands" ? 1 : 0) +
-    (priceRange[0] > filters.priceRange.min || priceRange[1] < filters.priceRange.max ? 1 : 0) +
-    (sortBy !== "featured" ? 1 : 0)
+  const currentQueryString = useMemo(() => urlParams.toString(), [urlParams])
+
+  const loadMore = useCallback(async () => {
+    if (!hasNextPage || !endCursor || isLoadingMore) return
+    setIsLoadingMore(true)
+
+    try {
+      const sp = new URLSearchParams(currentQueryString)
+      sp.set("cursor", endCursor)
+      sp.set("limit", "24")
+
+      const res = await fetch(`/api/shop/products?${sp.toString()}`)
+      if (!res.ok) throw new Error(`Failed to load more: ${res.status}`)
+
+      const data: {
+        products: ShopifyProduct[]
+        hasNextPage: boolean
+        endCursor: string | null
+      } = await res.json()
+
+      setProducts((prev) => [...prev, ...(data.products || [])])
+      setHasNextPage(Boolean(data.hasNextPage))
+      setEndCursor(data.endCursor)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [hasNextPage, endCursor, isLoadingMore, currentQueryString])
+
+  // Infinite scroll via IntersectionObserver
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore()
+      },
+      { rootMargin: "800px" },
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [loadMore])
 
   return (
     <>
@@ -162,18 +168,13 @@ export function ShopAllClient({
         <div className="container mx-auto max-w-7xl">
           <div className="mb-8 text-center md:mb-0">
             <h1 className="font-calsans text-5xl font-extrabold uppercase md:text-8xl">Shop All</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {sortedProducts.length} {sortedProducts.length === 1 ? "product" : "products"}
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Filters and Products */}
       <div className="container mx-auto max-w-7xl px-4 py-8">
         {/* Filter Bar */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          {/* Search */}
           <div className="relative flex-1 md:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -182,9 +183,7 @@ export function ShopAllClient({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  updateURL()
-                }
+                if (e.key === "Enter") updateURL()
               }}
               className="pl-9"
             />
@@ -192,12 +191,7 @@ export function ShopAllClient({
 
           <div className="flex items-center gap-2">
             {/* Sort */}
-            <Select
-              value={sortBy}
-              onValueChange={(value) => {
-                setSortBy(value)
-              }}
-            >
+            <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -223,13 +217,13 @@ export function ShopAllClient({
                   )}
                 </Button>
               </SheetTrigger>
+
               <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto px-8">
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
 
                 <div className="mt-6 space-y-6">
-                  {/* Product Type */}
                   {filters.productTypes.length > 0 && (
                     <div className="space-y-2">
                       <Label>Product Type</Label>
@@ -249,7 +243,6 @@ export function ShopAllClient({
                     </div>
                   )}
 
-                  {/* Vendor */}
                   {filters.vendors.length > 0 && (
                     <div className="space-y-2">
                       <Label>Brand</Label>
@@ -269,7 +262,6 @@ export function ShopAllClient({
                     </div>
                   )}
 
-                  {/* Price Range */}
                   <div className="space-y-4">
                     <Label>
                       Price Range: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
@@ -298,12 +290,11 @@ export function ShopAllClient({
               </SheetContent>
             </Sheet>
 
-            {/* Desktop Apply Button */}
+            {/* Desktop Apply */}
             <Button onClick={updateURL} className="hidden md:flex">
               Apply
             </Button>
 
-            {/* Clear Filters */}
             {activeFilterCount > 0 && (
               <Button variant="outline" onClick={clearFilters} className="hidden md:flex bg-transparent">
                 Clear All
@@ -312,73 +303,32 @@ export function ShopAllClient({
           </div>
         </div>
 
-        {/* Active Filters Display */}
-        {activeFilterCount > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            {searchQuery && (
-              <div className="flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm">
-                Search: {searchQuery}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("")
-                    updateURL()
-                  }}
-                  className="hover:text-foreground"
-                  aria-label="Remove search filter"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            {selectedType !== "All types" && (
-              <div className="flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm">
-                Type: {selectedType}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedType("All types")
-                    updateURL()
-                  }}
-                  className="hover:text-foreground"
-                  aria-label="Remove type filter"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            {selectedVendor !== "All brands" && (
-              <div className="flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-sm">
-                Brand: {selectedVendor}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedVendor("All brands")
-                    updateURL()
-                  }}
-                  className="hover:text-foreground"
-                  aria-label="Remove brand filter"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Products Grid */}
+        {/* Products */}
         {isPending ? (
           <div className="py-12 text-center text-muted-foreground">Loading...</div>
-        ) : sortedProducts.length > 0 ? (
-          <ProductGrid products={sortedProducts} />
+        ) : products.length > 0 ? (
+          <>
+            <ProductGrid products={products} />
+
+            {/* Infinite scroll sentinel */}
+            <div ref={sentinelRef} className="h-12" />
+
+            <div className="py-8 text-center text-sm text-muted-foreground">
+              {isLoadingMore
+                ? "Loading more..."
+                : hasNextPage
+                  ? "Scroll to load more"
+                  : "That’s everything."}
+            </div>
+          </>
         ) : (
-              <div className="py-12 text-center">
-                <p className="text-lg text-muted-foreground">No products found matching your filters.</p>
-                <Button onClick={clearFilters} variant="outline" className="mt-4 bg-transparent">
-                  Clear filters
+          <div className="py-12 text-center">
+            <p className="text-lg text-muted-foreground">No products found matching your filters.</p>
+            <Button onClick={clearFilters} variant="outline" className="mt-4 bg-transparent">
+              Clear filters
             </Button>
-              </div>
-            )}
+          </div>
+        )}
       </div>
     </>
   )

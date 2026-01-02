@@ -449,7 +449,7 @@ export function createCheckoutUrl(variantId: string, quantity = 1): string {
   if (!SHOPIFY_STORE_DOMAIN) {
     throw new Error("Shopify store domain not configured")
   }
-  // Remove the "gid://shopify/ProductVariant/" prefix if present
+
   const cleanVariantId = variantId.replace("gid://shopify/ProductVariant/", "")
   return `https://${SHOPIFY_STORE_DOMAIN}.myshopify.com/cart/${cleanVariantId}:${quantity}`
 }
@@ -844,88 +844,146 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   return data.cart
 }
 
-export async function getAllProducts(
-  cursor?: string,
-  limit = 24,
-): Promise<{
+type SortParam = "featured" | "price-asc" | "price-desc" | "title-asc" | "title-desc"
+
+export type ProductListParams = {
+  search?: string
+  type?: string
+  vendor?: string
+  minPrice?: string
+  maxPrice?: string
+  sort?: SortParam
+}
+
+export type ProductPageResult = {
   products: ShopifyProduct[]
   hasNextPage: boolean
   endCursor: string | null
-}> {
-  try {
-    const query = `
-      query GetAllProducts($first: Int!, $after: String) {
-        products(first: $first, after: $after) {
-          edges {
-            node {
-              id
-              title
-              handle
-              description
-              descriptionHtml
-              availableForSale
-              productType
-              vendor
-              tags
-              options {
-                id
-                name
-                values
-              }
-              priceRange {
-                minVariantPrice {
-                  amount
-                  currencyCode
-                }
-                maxVariantPrice {
-                  amount
-                  currencyCode
-                }
-              }
-              images(first: 1) {
-                edges {
-                  node {
-                    url
-                    altText
-                  }
-                }
-              }
-              variants(first: 10) {
-                edges {
-                  node {
-                    id
-                    title
-                    availableForSale
-                    price {
-                      amount
-                      currencyCode
-                    }
-                    selectedOptions {
-                      name
-                      value
-                    }
-                  }
+}
+
+function quoteIfNeeded(value: string) {
+  const escaped = value.replace(/"/g, '\\"')
+  return /\s/.test(escaped) ? `"${escaped}"` : escaped
+}
+
+
+function buildShopifyQuery(params: ProductListParams) {
+  const parts: string[] = []
+
+  const search = params.search?.trim()
+  if (search) {
+    // Treat as general search term (Shopify handles relevance matching)
+    parts.push(quoteIfNeeded(search))
+  }
+
+  const type = params.type?.trim()
+  if (type && type !== "All types") {
+    parts.push(`product_type:${quoteIfNeeded(type)}`)
+  }
+
+  const vendor = params.vendor?.trim()
+  if (vendor && vendor !== "All brands") {
+    parts.push(`vendor:${quoteIfNeeded(vendor)}`)
+  }
+
+  const min = Number.parseFloat(params.minPrice ?? "")
+  if (Number.isFinite(min)) {
+    parts.push(`variants.price:>=${min}`)
+  }
+
+  const max = Number.parseFloat(params.maxPrice ?? "")
+  if (Number.isFinite(max)) {
+    parts.push(`variants.price:<=${max}`)
+  }
+
+  return parts.join(" ")
+}
+
+function mapSort(sort: SortParam | undefined, hasSearch: boolean) {
+  // ProductSortKeys supports RELEVANCE, but Shopify warns it's for search queries. :contentReference[oaicite:4]{index=4}
+  if (!sort || sort === "featured") {
+    return { sortKey: hasSearch ? "RELEVANCE" : "BEST_SELLING", reverse: false }
+  }
+
+  switch (sort) {
+    case "price-asc":
+      return { sortKey: "PRICE", reverse: false }
+    case "price-desc":
+      return { sortKey: "PRICE", reverse: true }
+    case "title-asc":
+      return { sortKey: "TITLE", reverse: false }
+    case "title-desc":
+      return { sortKey: "TITLE", reverse: true }
+    default:
+      return { sortKey: hasSearch ? "RELEVANCE" : "BEST_SELLING", reverse: false }
+  }
+}
+
+export async function getProductsPage(
+  params: ProductListParams,
+  cursor?: string,
+  limit = 24,
+): Promise<ProductPageResult> {
+  const queryString = buildShopifyQuery(params)
+  const hasSearch = Boolean(params.search?.trim())
+  const { sortKey, reverse } = mapSort(params.sort, hasSearch)
+
+  const query = `
+    query ProductsPage($first: Int!, $after: String, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+      products(first: $first, after: $after, query: $query, sortKey: $sortKey, reverse: $reverse) {
+        edges {
+          cursor
+          node {
+            id
+            title
+            handle
+            availableForSale
+            productType
+            vendor
+            tags
+            priceRange {
+              minVariantPrice { amount currencyCode }
+              maxVariantPrice { amount currencyCode }
+            }
+            images(first: 1) {
+              edges { node { url altText } }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  title
+                  availableForSale
+                  price { amount currencyCode }
+                  selectedOptions { name value }
                 }
               }
             }
           }
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
-    `
+    }
+  `
 
-    const variables = { first: limit, after: cursor }
+  try {
+    const variables = {
+      first: limit,
+      after: cursor ?? null,
+      query: queryString || null,
+      sortKey,
+      reverse,
+    }
+
     const data = await shopifyFetch<{
       products: {
         edges: Array<{
+          cursor: string
           node: ShopifyProduct & {
-            productType: string
-            vendor: string
-            tags: string[]
-            variants: { edges: Array<{ node: ProductVariant }> }
+            variants: { edges: Array<{ node: any }> }
           }
         }>
         pageInfo: { hasNextPage: boolean; endCursor: string | null }
@@ -933,18 +991,85 @@ export async function getAllProducts(
     }>(query, variables)
 
     return {
-      products: data.products.edges.map((edge) => ({
-        ...edge.node,
-        variants: edge.node.variants.edges.map((v) => v.node),
+      products: data.products.edges.map((e) => ({
+        ...e.node,
+        // normalize variants to an array like your old code
+        variants: e.node.variants?.edges?.map((v) => v.node) ?? [],
       })),
       hasNextPage: data.products.pageInfo.hasNextPage,
       endCursor: data.products.pageInfo.endCursor,
     }
-  } catch (error) {
-    console.error("Failed to fetch all products from Shopify:", error)
+  } catch (err) {
+    console.error("getProductsPage failed:", err)
     return { products: [], hasNextPage: false, endCursor: null }
   }
 }
+
+export async function getShopFilters(): Promise<{
+  productTypes: string[]
+  vendors: string[]
+  priceRange: { min: number; max: number }
+}> {
+  // Pull "faceted" filter values from ProductConnection.filters :contentReference[oaicite:5]{index=5}
+  // And compute price min/max cheaply by grabbing 1 product at each extreme.
+  const query = `
+    query ShopFilters {
+      base: products(first: 1) {
+        filters {
+          id
+          label
+          type
+          values { label }
+        }
+      }
+      minP: products(first: 1, sortKey: PRICE, reverse: false) {
+        nodes { priceRange { minVariantPrice { amount } } }
+      }
+      maxP: products(first: 1, sortKey: PRICE, reverse: true) {
+        nodes { priceRange { maxVariantPrice { amount } } }
+      }
+    }
+  `
+
+  try {
+    const data = await shopifyFetch<{
+      base: { filters: Array<{ id: string; label: string; type: string; values: Array<{ label: string }> }> }
+      minP: { nodes: Array<{ priceRange: { minVariantPrice: { amount: string } } }> }
+      maxP: { nodes: Array<{ priceRange: { maxVariantPrice: { amount: string } } }> }
+    }>(query, {})
+
+    const filters = data.base.filters ?? []
+
+    const typeFilter =
+      filters.find((f) => f.id.toLowerCase().includes("product_type")) ??
+      filters.find((f) => f.label.toLowerCase().includes("type"))
+
+    const vendorFilter =
+      filters.find((f) => f.id.toLowerCase().includes("vendor")) ??
+      filters.find((f) => f.label.toLowerCase().includes("vendor")) ??
+      filters.find((f) => f.label.toLowerCase().includes("brand"))
+
+    const productTypes = Array.from(new Set((typeFilter?.values ?? []).map((v) => v.label))).sort()
+    const vendors = Array.from(new Set((vendorFilter?.values ?? []).map((v) => v.label))).sort()
+
+    const min = Number.parseFloat(data.minP.nodes?.[0]?.priceRange?.minVariantPrice?.amount ?? "0")
+    const max = Number.parseFloat(data.maxP.nodes?.[0]?.priceRange?.maxVariantPrice?.amount ?? "0")
+
+    return {
+      productTypes,
+      vendors,
+      priceRange: {
+        min: Number.isFinite(min) ? min : 0,
+        max: Number.isFinite(max) ? max : 0,
+      },
+    }
+  } catch (err) {
+    console.error("getShopFilters failed:", err)
+    return { productTypes: [], vendors: [], priceRange: { min: 0, max: 0 } }
+  }
+}
+
+declare function shopifyFetch<T>(query: string, variables: Record<string, any>): Promise<T>
 
 export async function getProductFilters(): Promise<{
   productTypes: string[]
