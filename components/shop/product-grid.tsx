@@ -10,7 +10,6 @@ type ProductGridProps = {
 }
 
 function StarRating({ rating, count }: { rating: number; count: number }) {
-  // simple 0–5 display (no half stars)
   const filled = Math.max(0, Math.min(5, Math.round(rating)))
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -33,13 +32,13 @@ export function ProductGrid({ products }: ProductGridProps) {
     )
   }
 
+
   return (
     <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
       {products.map((product) => {
         const image = product.images.edges[0]?.node
         const price = product.priceRange.minVariantPrice
 
-        // Optional: if you add ratings via metafields or an app, map them here.
         const rating = (product as any).rating as number | undefined
         const reviewCount = (product as any).reviewCount as number | undefined
 

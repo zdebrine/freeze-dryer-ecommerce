@@ -4,18 +4,7 @@ import * as React from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-/**
- * OptimizedHeroVideo
- * - Shows an optimized Next.js <Image> poster immediately (great LCP).
- * - Defers adding <source> + starting playback until near viewport.
- * - Respects prefers-reduced-motion by never playing video.
- * - Falls back gracefully if autoplay fails or video errors.
- *
- * Put your assets in /public:
- * - /hero-poster.jpg (or .png)
- * - /hero.webm
- * - /hero.mp4
- */
+
 type OptimizedHeroVideoProps = {
     posterSrc: string
     posterAlt: string
@@ -60,7 +49,6 @@ export function OptimizedHeroVideo({
     return () => mediaQuery.removeEventListener ?.("change", handler)
   }, [])
 
-    // Only start loading the video when near the viewport.
     React.useEffect(() => {
         const el = videoRef.current
         if (!el || !canShowVideo) return
