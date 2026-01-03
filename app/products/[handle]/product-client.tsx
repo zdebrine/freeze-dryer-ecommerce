@@ -71,7 +71,7 @@ export function ProductClient({ product }: ProductClientProps) {
     <>
       <div className="grid gap-8 md:grid-cols-2">
         {/* Product Images */}
-        <div className="space-y-4">
+        <div className="space-y-4 md:sticky md:top-24 md:self-start">
           <div
             ref={imageContainerRef}
             className="relative aspect-square overflow-hidden rounded-lg bg-muted touch-pan-y"

@@ -18,14 +18,11 @@ import { ProductCarousel } from "@/components/shop/product-carousel"
 export const revalidate = 60
 
 export default async function HomePage() {
-  // 1) Fetch landing config from Sanity
   const landing = await client.fetch(LANDING_PAGE_QUERY)
 
-  // 2) Decide product limit from Sanity (fallback to 8)
   const limit = landing?.productsSection?.limit ?? 8
   const collection = landing?.productsSection?.collection ?? "coffees"
 
-  // 3) Fetch products from Shopify
   let products = []
   let hasShopifyError = false
 
