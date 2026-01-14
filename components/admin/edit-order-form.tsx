@@ -50,6 +50,7 @@ export function EditOrderForm({
           client_id: formData.get("client_id") as string,
           coffee_type: formData.get("coffee_type") as string,
           quantity_kg: Number.parseFloat(formData.get("quantity_kg") as string),
+          lot_number: formData.get("lot_number") as string,
           roast_level: formData.get("roast_level") as string,
           grind_size: formData.get("grind_size") as string,
           special_instructions: formData.get("special_instructions") as string,
@@ -111,6 +112,19 @@ export function EditOrderForm({
             placeholder="50.00"
             defaultValue={order.quantity_kg}
             required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="lot_number">Lot Number *</Label>
+          <Input
+            id="lot_number"
+            name="lot_number"
+            placeholder="e.g., LOT-2024-001"
+            defaultValue={order.lot_number || ""}
+            required
+            pattern="[A-Za-z0-9-]+"
+            title="Lot number can only contain letters, numbers, and hyphens"
           />
         </div>
 

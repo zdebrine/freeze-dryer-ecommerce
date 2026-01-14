@@ -84,6 +84,7 @@ export function RequestOrderForm() {
         client_phone: profile?.phone,
         coffee_type: formData.get("coffee_type") as string,
         quantity_kg: Number.parseFloat(formData.get("quantity_kg") as string),
+        lot_number: formData.get("lot_number") as string,
         special_instructions: formData.get("special_instructions") as string,
         requested_completion_date: formData.get("requested_completion_date") as string,
         status: "pending",
@@ -166,7 +167,19 @@ export function RequestOrderForm() {
           />
         </div>
 
-        <div className="space-y-2 sm:col-span-2">
+        <div className="space-y-2">
+          <Label htmlFor="lot_number">Lot Number *</Label>
+          <Input
+            id="lot_number"
+            name="lot_number"
+            placeholder="e.g., LOT-2024-001"
+            required
+            pattern="[A-Za-z0-9-]+"
+            title="Lot number can only contain letters, numbers, and hyphens"
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="requested_completion_date">Requested Completion Date *</Label>
           <Input id="requested_completion_date" name="requested_completion_date" type="date" required />
         </div>

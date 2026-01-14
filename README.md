@@ -37,21 +37,21 @@ A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, 
 ### Installation
 
 1. **Clone the repository**
-   ```bash
+   \`\`\`bash
    git clone <repository-url>
    cd freeze-dryer-ecommerce
-   ```
+   \`\`\`
 
 2. **Install dependencies**
-   ```bash
+   \`\`\`bash
    pnpm install
-   ```
+   \`\`\`
 
 3. **Set up environment variables**
    
    Create a `.env.local` file in the root directory with the following variables:
 
-   ```bash
+   \`\`\`bash
    # Supabase
    SUPABASE_URL=your_supabase_url
    SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -92,20 +92,20 @@ A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, 
 
    # App URLs
    NEXT_PUBLIC_APP_URL=http://localhost:3000
-   ```
+   \`\`\`
 
 4. **Set up the database**
    
    Run the SQL scripts in the `scripts/` folder in order:
-   ```bash
+   \`\`\`bash
    # Execute each script in your Supabase SQL editor
    # Or use the Supabase CLI
-   ```
+   \`\`\`
 
 5. **Run the development server**
-   ```bash
+   \`\`\`bash
    pnpm dev
-   ```
+   \`\`\`
 
    Open [http://localhost:3000](http://localhost:3000) to see the storefront.
 
@@ -115,7 +115,7 @@ A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, 
 
 ## Project Structure
 
-```
+\`\`\`
 ├── app/                      # Next.js App Router pages
 │   ├── admin/               # Admin dashboard routes
 │   ├── client/              # Client portal routes
@@ -137,7 +137,7 @@ A full-stack e-commerce platform built with Next.js 15, Shopify Storefront API, 
 │   └── email/               # Email templates
 ├── scripts/                 # Database migration scripts
 └── public/                  # Static assets
-```
+\`\`\`
 
 ## Key Routes
 
@@ -209,12 +209,12 @@ The app will automatically redeploy on every push to your main branch.
 
 ## Development Scripts
 
-```bash
+\`\`\`bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm lint         # Run ESLint
-```
+\`\`\`
 
 ## Accessibility
 

@@ -6,7 +6,6 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { CartProvider } from "@/components/cart/cart-context"
 import { WebVitals } from "@/components/analytics/web-vitals"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import { client } from "@/cms/lib/client"
 import { SITE_SETTINGS_QUERY } from "@/cms/lib/queries"
 
@@ -84,7 +83,6 @@ export default function RootLayout({
       >
         <CartProvider>{children}</CartProvider>
         <Toaster />
-        <SpeedInsights/>
         <Analytics />
         <WebVitals />
       </body>

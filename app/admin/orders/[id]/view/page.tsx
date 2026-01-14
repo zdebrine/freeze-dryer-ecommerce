@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft, Edit } from "lucide-react"
 import { notFound, redirect } from "next/navigation"
-import { OrderStatusUpdate } from "@/components/admin/order-status-update"
-import { OrderLogs } from "@/components/admin/order-logs"
 import { OrderConfirmation } from "@/components/admin/order-confirmation"
 import { PackageReceivedButton } from "@/components/admin/package-received-button"
 import { CreateShopifyCheckoutButton } from "@/components/admin/create-shopify-checkout-button"
+import { EnhancedOrderHistory } from "@/components/admin/enhanced-order-history"
+import { OrderWorkflowStage } from "@/components/admin/order-workflow-stage"
 
 const statusColors = {
   pending: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
@@ -50,14 +50,37 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     notFound()
   }
 
-  const needsConfirmation = (order.unified_status || order.status) === "pending_confirmation"
-  const needsPackageConfirmation = (order.unified_status || order.order_stage) === "awaiting_shipment"
-  const canCreateShopifyCheckout =
-    (order.unified_status || order.order_stage) === "ready_for_payment" && !order.shopify_checkout_url
+  const { data: signoffs } = await supabase
+    .from("order_signoffs")
+    .select("*")
+    .eq("order_id", id)
+    .order("signed_at", { ascending: true })
+
+  const { data: logs } = await supabase
+    .from("order_logs")
+    .select(
+      `
+      *,
+      profiles!order_logs_user_id_fkey (full_name)
+    `,
+    )
+    .eq("order_id", id)
+    .order("created_at", { ascending: false })
+
+  const { data: machines } = await supabase.from("machines").select("*")
+
+  const currentStatus = order.unified_status || order.status
+
+  const needsConfirmation = currentStatus === "pending_confirmation"
+  const needsPackageConfirmation = currentStatus === "awaiting_shipment"
+  const inWorkflowStage = ["pre_freeze_prep", "waiting_for_freeze_dryer", "freeze_drying", "final_packaging"].includes(
+    currentStatus,
+  )
+  const canCreateShopifyCheckout = currentStatus === "ready_for_payment" && !order.shopify_checkout_url
 
   return (
-    <div className="space-y-6 p-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-4 sm:p-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/admin/orders">
@@ -74,10 +97,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </Button>
       </div>
 
-      <div className="flex items-center gap-3">
-        <h1 className="text-3xl font-bold tracking-tight">{order.order_number}</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{order.order_number}</h1>
         <Badge className={statusColors[order.status as keyof typeof statusColors]}>
-          {order.unified_status ? order.unified_status.replace(/_/g, " ") : order.status.replace("_", " ")}
+          {currentStatus.replace(/_/g, " ")}
         </Badge>
       </div>
 
@@ -109,13 +132,29 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </Card>
       )}
 
+      {inWorkflowStage && (
+        <OrderWorkflowStage orderId={order.id} currentStatus={currentStatus} order={order} machines={machines || []} />
+      )}
+
       {canCreateShopifyCheckout && (
         <Card className="border-green-500">
           <CardHeader>
             <CardTitle>Order Complete - Create Checkout</CardTitle>
-            <CardDescription>The order is ready. Create a Shopify checkout to send to the client.</CardDescription>
+            <CardDescription>
+              The order is packaged and ready. Create a Shopify checkout to send to the client.
+            </CardDescription>
           </CardHeader>
           <CardContent>
+            {order.total_packaging_cost && (
+              <div className="mb-4 rounded-lg bg-muted p-3">
+                <p className="text-sm font-medium">Total Order Cost: ${order.total_packaging_cost.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Packaging: {order.packaging_type?.replace("_", " ")}
+                  {order.bulk_bags_count && ` - ${order.bulk_bags_count} bags`}
+                  {order.sachet_boxes_count && ` - ${order.sachet_boxes_count} boxes`}
+                </p>
+              </div>
+            )}
             <CreateShopifyCheckoutButton orderId={order.id} />
           </CardContent>
         </Card>
@@ -129,6 +168,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <CardDescription>Information about this order</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid gap-2">
+              <p className="text-sm text-muted-foreground">Lot Number</p>
+              <p className="font-medium font-mono">{order.lot_number || "Not assigned"}</p>
+            </div>
             <div className="grid gap-2">
               <p className="text-sm text-muted-foreground">Coffee Type</p>
               <p className="font-medium">{order.coffee_type}</p>
@@ -195,12 +238,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 </Badge>
               </div>
             )}
-            {order.unified_status && (
+            {order.packaging_type && (
               <div className="grid gap-2">
-                <p className="text-sm text-muted-foreground">Current Status</p>
-                <Badge variant="outline" className="w-fit capitalize">
-                  {order.unified_status.replace(/_/g, " ")}
-                </Badge>
+                <p className="text-sm text-muted-foreground">Packaging</p>
+                <p className="font-medium capitalize">{order.packaging_type.replace(/_/g, " ")}</p>
+                {order.bulk_bags_count && <p className="text-sm">{order.bulk_bags_count} × 100g bags</p>}
+                {order.sachet_boxes_count && <p className="text-sm">{order.sachet_boxes_count} × 6-pack boxes</p>}
+                {order.custom_packaging_description && <p className="text-sm">{order.custom_packaging_description}</p>}
+                {order.total_packaging_cost && (
+                  <p className="text-sm font-semibold">Total: ${order.total_packaging_cost.toFixed(2)}</p>
+                )}
               </div>
             )}
           </CardContent>
@@ -237,32 +284,18 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </Card>
       </div>
 
-      {/* Status Update */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Update Order Status</CardTitle>
-          <CardDescription>Change the order status and add notes</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <OrderStatusUpdate
-            orderId={id}
-            currentStatus={order.status}
-            currentMachineId={order.machine_id}
-            currentUnifiedStatus={order.unified_status}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Order Logs */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Order History</CardTitle>
-          <CardDescription>Timeline of status changes and updates</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <OrderLogs orderId={id} />
-        </CardContent>
-      </Card>
+      <EnhancedOrderHistory
+        logs={logs || []}
+        signoffs={signoffs || []}
+        weightData={{
+          beans_input_weight_kg: order.beans_input_weight_kg,
+          concentrate_output_weight_kg: order.concentrate_output_weight_kg,
+          concentrate_input_weight_kg: order.concentrate_input_weight_kg,
+          powder_output_weight_kg: order.powder_output_weight_kg,
+          beans_to_concentrate_yield_percent: order.beans_to_concentrate_yield_percent,
+          concentrate_to_powder_yield_percent: order.concentrate_to_powder_yield_percent,
+        }}
+      />
     </div>
   )
 }

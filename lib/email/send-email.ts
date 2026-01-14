@@ -7,22 +7,38 @@ import { createClient } from "@/lib/supabase/server"
 
 export async function sendEmail(to: string, subject: string, html: string, text: string) {
   try {
+    if (process.env.RESEND_API_KEY) {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+          to,
+          subject,
+          html,
+          text,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.text()
+        console.error("[v0] Resend API error:", error)
+        throw new Error(`Resend API error: ${error}`)
+      }
+
+      const data = await response.json()
+      console.log("[v0] Email sent successfully via Resend:", data.id)
+      return { success: true, id: data.id }
+    }
+
     // For development: Log emails to console
-    console.log("[v0] Email would be sent:")
+    console.log("[v0] Email would be sent (RESEND_API_KEY not configured):")
     console.log("To:", to)
     console.log("Subject:", subject)
     console.log("Text:", text)
-
-    // TODO: Integrate with email service provider
-    // Example with Resend:
-    // const resend = new Resend(process.env.RESEND_API_KEY)
-    // await resend.emails.send({
-    //   from: 'orders@yourdomain.com',
-    //   to,
-    //   subject,
-    //   html,
-    //   text
-    // })
 
     return { success: true }
   } catch (error) {
