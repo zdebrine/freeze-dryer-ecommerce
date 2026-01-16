@@ -10,10 +10,16 @@ import { apiVersion, dataset, projectId } from "./cms/env"
 import { schema } from "./cms/schemaTypes/schema"
 import { structure } from "./cms/structure"
 
-export default defineConfig({
+const config = defineConfig({
   basePath: "/studio",
   projectId,
   dataset,
   schema,
   plugins: [structureTool({ structure }), visionTool({ defaultApiVersion: apiVersion })],
 })
+
+// Named export for flexibility
+export { config }
+
+// Default export for Studio.tsx import
+export default config
