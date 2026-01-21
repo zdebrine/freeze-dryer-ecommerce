@@ -872,7 +872,6 @@ function buildShopifyQuery(params: ProductListParams) {
 
   const search = params.search?.trim()
   if (search) {
-    // Treat as general search term (Shopify handles relevance matching)
     parts.push(quoteIfNeeded(search))
   }
 
@@ -900,7 +899,6 @@ function buildShopifyQuery(params: ProductListParams) {
 }
 
 function mapSort(sort: SortParam | undefined, hasSearch: boolean) {
-  // ProductSortKeys supports RELEVANCE, but Shopify warns it's for search queries. :contentReference[oaicite:4]{index=4}
   if (!sort || sort === "featured") {
     return { sortKey: hasSearch ? "RELEVANCE" : "BEST_SELLING", reverse: false }
   }
@@ -993,7 +991,6 @@ export async function getProductsPage(
     return {
       products: data.products.edges.map((e) => ({
         ...e.node,
-        // normalize variants to an array like your old code
         variants: e.node.variants?.edges?.map((v) => v.node) ?? [],
       })),
       hasNextPage: data.products.pageInfo.hasNextPage,
@@ -1010,8 +1007,6 @@ export async function getShopFilters(): Promise<{
   vendors: string[]
   priceRange: { min: number; max: number }
 }> {
-  // Pull "faceted" filter values from ProductConnection.filters :contentReference[oaicite:5]{index=5}
-  // And compute price min/max cheaply by grabbing 1 product at each extreme.
   const query = `
     query ShopFilters {
       base: products(first: 1) {

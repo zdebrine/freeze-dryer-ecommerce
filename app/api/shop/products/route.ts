@@ -24,7 +24,6 @@ export async function GET(req: Request) {
 
   return NextResponse.json(result, {
     headers: {
-      // CDN-friendly caching on Vercel
       "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
     },
   })

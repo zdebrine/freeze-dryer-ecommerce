@@ -10,7 +10,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // Extract name from email for personalization
     const inviteeName = to.split("@")[0]
 
     const emailTemplate = getTeamInvitationEmail(inviteeName, inviterName, inviteLink)
