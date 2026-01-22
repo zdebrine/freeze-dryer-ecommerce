@@ -1,4 +1,3 @@
-// app/shop/page.tsx
 import { Suspense } from "react"
 import { ShopHeader } from "@/components/shop/header"
 import { ShopFooter } from "@/components/shop/footer"
@@ -37,6 +36,7 @@ export default async function ShopAllPage({ searchParams }: { searchParams: Sear
     ),
     getShopFilters(),
   ])
+
 
   return (
     <div className="flex min-h-screen flex-col">

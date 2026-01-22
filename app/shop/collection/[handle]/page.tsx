@@ -14,11 +14,7 @@ type CollectionPageProps = {
 
 export default async function CollectionPage({ params }: CollectionPageProps) {
   const { handle } = await params
-
-  // Fetch landing page config for header/footer
   const landing = await client.fetch(LANDING_PAGE_QUERY)
-
-  // Fetch products from this collection
   let products = []
   const collectionTitle = handle
     .split("-")
@@ -26,12 +22,11 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     .join(" ")
 
   try {
-    products = await getProducts(100, handle) // Fetch up to 100 products
+    products = await getProducts(100, handle)
   } catch (error) {
     console.error(`Failed to fetch collection "${handle}":`, error)
   }
 
-  // If no products found, show 404
   if (products.length === 0) {
     notFound()
   }
@@ -43,7 +38,6 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       <ShopHeader config={landing?.header} />
 
       <main>
-        {/* Collection Header */}
         <section className="border-t bg-background px-4 pt-30 pb-0 md:pt-40 md:pb-20">
           <div className="container mx-auto max-w-7xl">
             <div className="mb-8 text-center md:mb-0">
@@ -55,7 +49,6 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
           </div>
         </section>
 
-        {/* Products Grid */}
         <div className="px-4 pb-20 md:px-16">
           <ProductGrid products={products} />
         </div>

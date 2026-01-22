@@ -14,10 +14,8 @@ import { HowItWorks } from "@/components/b2b/how-it-works"
 export const revalidate = 60
 
 export default async function B2BPage() {
-  // Fetch landing page data for header/footer
   const landing = await client.fetch(LANDING_PAGE_QUERY)
 
-  // Fetch instant processing page data
   const instantProcessing = await client.fetch(INSTANT_PROCESSING_QUERY)
 
   const hero = instantProcessing?.hero
@@ -27,7 +25,7 @@ export default async function B2BPage() {
   const howItWorks = instantProcessing?.howItWorks
   const ctaSection = instantProcessing?.ctaSection
 
-  // Hero defaults
+
   const mp4Src = hero?.videoMp4 || process.env.NEXT_PUBLIC_HERO_VIDEO_MP4_URL
   const webmSrc = hero?.videoWebm || process.env.NEXT_PUBLIC_HERO_VIDEO_WEBM_URL
   const posterSrc = hero?.posterUrl || "/hero.png"

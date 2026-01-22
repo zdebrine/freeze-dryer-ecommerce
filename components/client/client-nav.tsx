@@ -29,7 +29,7 @@ export function ClientNav() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/client" className="flex items-center gap-2">
-          <span className="text-2xl font-hero text-primary sm:text-3xl">mernin'</span>
+          <span className="text-2xl font-hero text-primary sm:text-3xl">CoffeeOS</span>
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">

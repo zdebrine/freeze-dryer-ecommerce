@@ -25,7 +25,6 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
-  // IMPORTANT: getUser() must be called to refresh the session
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -54,6 +53,5 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // IMPORTANT: Must return the supabaseResponse object to keep cookies in sync
   return supabaseResponse
 }

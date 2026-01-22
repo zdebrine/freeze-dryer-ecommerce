@@ -54,7 +54,7 @@ export default function LoginPage() {
         <span
           className={`text-5xl font-hero text-primary`}
         >
-          mernin'
+          CoffeeOS
         </span>
       </Link>
       <div className="w-full max-w-sm">

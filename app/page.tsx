@@ -53,7 +53,6 @@ export default async function HomePage() {
   if (isShopifyConfigured && productOfTheMonthConfig?.enabled !== false) {
     try {
       if (productOfTheMonthConfig?.productHandle) {
-        // Fetch specific product by handle
         productOfTheMonthProduct = await getProduct(productOfTheMonthConfig.productHandle)
       } else if (products.length > 0) {
         // Fallback to first product if no handle specified
@@ -64,7 +63,6 @@ export default async function HomePage() {
     }
   }
 
-  // Pull section config with safe defaults
   const productsSection = landing?.productsSection
   const productsAnchorId = productsSection?.anchorId || "products"
   const productsTitle = productsSection?.title || "Our Coffee"
@@ -80,7 +78,6 @@ export default async function HomePage() {
       <HeroSection config={landing?.hero} />
 
       <main>
-        {/* Shopify Setup Notice - Only show if not configured */}
         {!isShopifyConfigured && <ShopifySetupNotice />}
 
         {landing?.collectionsSection?.collections && (
@@ -95,7 +92,6 @@ export default async function HomePage() {
           <TextMarquee text={landing.textMarquee.text} speed={landing.textMarquee.speed} />
         )}
 
-        {/* Product Grid */}
         <section id={productsAnchorId} className="border-t bg-background px-4 pt-6 md:pt-10 md:px-8">
           <div className="mx-auto">
             <div className="mb-4 text-center md:mb-12 md:px-16">

@@ -32,8 +32,7 @@ export function AdminSidebar() {
     <>
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <Package className="h-6 w-6 text-primary" />
-          <span className="text-2xl text-primary font-hero">mernin'</span>
+          <span className="text-2xl text-primary font-hero">CoffeeOS</span>
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -55,8 +54,7 @@ export function AdminSidebar() {
       >
         {/* Logo - hidden on mobile, shown on desktop */}
         <div className="hidden h-16 items-center gap-2 border-b px-6 lg:flex">
-          <Package className="h-6 w-6 text-primary" />
-          <span className="text-3xl text-primary font-hero">mernin'</span>
+          <span className="text-3xl text-primary font-hero">CoffeeOS</span>
         </div>
 
         {/* Navigation */}

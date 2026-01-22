@@ -144,7 +144,6 @@ export function ShopAllClient({
     }
   }, [hasNextPage, endCursor, isLoadingMore, currentQueryString])
 
-  // Infinite scroll via IntersectionObserver
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     const el = sentinelRef.current
@@ -163,7 +162,6 @@ export function ShopAllClient({
 
   return (
     <>
-      {/* Page Header */}
       <section className="border-t bg-background px-4 pt-30 pb-0 md:pt-40 md:pb-12">
         <div className="container mx-auto max-w-7xl">
           <div className="mb-8 text-center md:mb-0">
@@ -173,7 +171,6 @@ export function ShopAllClient({
       </section>
 
       <div className="container mx-auto max-w-7xl px-4 py-8">
-        {/* Filter Bar */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1 md:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -190,7 +187,6 @@ export function ShopAllClient({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Sort */}
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
@@ -204,7 +200,6 @@ export function ShopAllClient({
               </SelectContent>
             </Select>
 
-            {/* Mobile Filters */}
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="default" className="gap-2 bg-transparent">
@@ -290,7 +285,6 @@ export function ShopAllClient({
               </SheetContent>
             </Sheet>
 
-            {/* Desktop Apply */}
             <Button onClick={updateURL} className="hidden md:flex">
               Apply
             </Button>
@@ -303,14 +297,12 @@ export function ShopAllClient({
           </div>
         </div>
 
-        {/* Products */}
         {isPending ? (
           <div className="py-12 text-center text-muted-foreground">Loading...</div>
         ) : products.length > 0 ? (
           <>
             <ProductGrid products={products} />
 
-            {/* Infinite scroll sentinel */}
             <div ref={sentinelRef} className="h-12" />
 
             <div className="py-8 text-center text-sm text-muted-foreground">
