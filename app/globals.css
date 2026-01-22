@@ -4,18 +4,18 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #faf9dd;
+  --background: rgb(254, 255, 240);
   --foreground: #1a1a1a;
   --card: rgb(255, 255, 255);
   --card-foreground: #1a1a1a;
-  --popover: rgb(250, 249, 221);
+  --popover: rgb(254, 255, 240);
   --popover-foreground: #1a1a1a;
 
   /* Updated primary color to professional blue for B2B app */
   --primary: rgb(229, 81, 52);
   --primary-foreground: rgb(255, 255, 255);
 
-  --secondary: #faf9dd;
+  --secondary: rgb(254, 255, 240);
   --secondary-foreground: #080808;
   --muted: #f5f5f5;
   --muted-foreground: #525252;

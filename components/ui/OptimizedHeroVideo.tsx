@@ -12,8 +12,11 @@ type OptimizedHeroVideoProps = {
     mp4Src?: string
     className?: string
     priorityPoster?: boolean
+    /** Start loading/playing slightly before it enters view */
     rootMargin?: string
+    /** If true, video fills the container like a background */
     fill?: boolean
+    /** Optional overlay content on top of the media */
     useAspectRatio: boolean;
     children?: React.ReactNode
 }
@@ -35,6 +38,7 @@ export function OptimizedHeroVideo({
     const [shouldLoadVideo, setShouldLoadVideo] = React.useState(false)
     const [canShowVideo, setCanShowVideo] = React.useState(true)
 
+    // Reduced motion: never load/play the video.
     React.useEffect(() => {
         if (typeof window === "undefined") return
         const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
@@ -63,15 +67,18 @@ export function OptimizedHeroVideo({
         return () => obs.disconnect()
     }, [canShowVideo, rootMargin])
 
+    // Try to play once sources are mounted.
     React.useEffect(() => {
         const el = videoRef.current
         if (!el || !canShowVideo || !shouldLoadVideo) return
 
         const tryPlay = async () => {
             try {
+                // On some browsers it helps to call load() before play() when sources are added dynamically
                 el.load()
                 await el.play()
             } catch {
+                // Autoplay blocked or other issue — keep poster visible.
                 setCanShowVideo(false)
             }
         }
@@ -85,6 +92,7 @@ export function OptimizedHeroVideo({
         <div
             className={cn(
                 "relative overflow-hidden rounded-2xl border bg-muted/30",
+                // If you want a fixed aspect ratio by default (no CLS), keep aspect-video:
                 `${useAspectRatio && "aspect-ratio"}`,
                 className
             )}
@@ -104,6 +112,7 @@ export function OptimizedHeroVideo({
                     muted
                     playsInline
                     loop
+                    // Don't use autoPlay directly; we play() after intersection to avoid eager downloads.
                     preload="none"
                     poster={posterSrc}
                     onError={() => setCanShowVideo(false)}

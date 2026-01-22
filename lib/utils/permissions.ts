@@ -13,6 +13,7 @@ export async function getUserPermissions() {
 
   if (!profile) return null
 
+  // Admins have full permissions
   if (profile.role === "admin") {
     return {
       role: "admin" as const,
