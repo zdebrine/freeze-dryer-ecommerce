@@ -12,9 +12,27 @@ export default defineType({
       type: "object",
       fields: [
         defineField({
+          name: "logoImage",
+          title: "Logo Image",
+          type: "image",
+          description: "Upload a logo image. When provided, this will be used instead of the logo text.",
+          options: {
+            hotspot: false,
+          },
+        }),
+        defineField({
+          name: "logoMaxWidth",
+          title: "Logo Max Width (px)",
+          type: "number",
+          description: "Maximum width of the logo image in pixels. Default is 150px.",
+          initialValue: 150,
+          validation: (r) => r.min(50).max(400),
+        }),
+        defineField({
           name: "logoText",
           title: "Logo Text",
           type: "string",
+          description: "Fallback text shown when no logo image is provided.",
           initialValue: "mernin'",
         }),
         defineField({

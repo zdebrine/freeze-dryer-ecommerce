@@ -71,7 +71,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   const currentStatus = order.unified_status || order.status
 
-  const needsConfirmation = currentStatus === "pending_confirmation"
+  // Orders need confirmation if they're in "pending_confirmation" OR if they're in "pending" status
+  // (which happens when a client creates an order and unified_status isn't set yet)
+  const needsConfirmation = currentStatus === "pending_confirmation" || currentStatus === "pending"
   const needsPackageConfirmation = currentStatus === "awaiting_shipment"
   const inWorkflowStage = ["pre_freeze_prep", "waiting_for_freeze_dryer", "freeze_drying", "final_packaging"].includes(
     currentStatus,

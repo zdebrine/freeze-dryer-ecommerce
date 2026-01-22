@@ -1,6 +1,8 @@
 export const LANDING_PAGE_QUERY = `*[_type == "landingPage"][0]{
     theme,
     header {
+      "logoImageUrl": logoImage.asset->url,
+      logoMaxWidth,
       logoText,
       navLinks,
       loginLabel,

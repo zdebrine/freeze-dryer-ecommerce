@@ -88,6 +88,7 @@ export function RequestOrderForm() {
         special_instructions: formData.get("special_instructions") as string,
         requested_completion_date: formData.get("requested_completion_date") as string,
         status: "pending",
+        unified_status: "pending_confirmation",
         assigned_admin_id: selectedAdmin || null,
       })
 

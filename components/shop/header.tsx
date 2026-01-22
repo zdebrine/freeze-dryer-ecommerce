@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import Link from "next/link"
+import Image from "next/image"
 import { ShoppingCart, Menu, LogIn } from "lucide-react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
@@ -15,6 +16,8 @@ type NavLink = {
 }
 
 type HeaderConfig = {
+  logoImageUrl?: string
+  logoMaxWidth?: number
   logoText?: string
   navLinks?: NavLink[]
   loginLabel?: string
@@ -55,6 +58,8 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
   const isHomePage = pathname === "/" || pathname === "/b2b"
   const shouldUseTransparentHeader = isHomePage && !isScrolled
 
+  const logoImageUrl = config?.logoImageUrl
+  const logoMaxWidth = config?.logoMaxWidth ?? 150
   const logoText = config?.logoText ?? "mernin'"
   const navLinks: NavLink[] = config?.navLinks?.length
     ? config.navLinks
@@ -128,13 +133,25 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
         </div>
 
         <Link href="/" className="flex items-center gap-2 lg:flex-1 lg:justify-center">
-          <span
-            className={`text-4xl font-hero transition-colors ${
-              shouldUseTransparentHeader ? "text-secondary" : "text-secondary"
-            }`}
-          >
-            {logoText}
-          </span>
+          {logoImageUrl ? (
+            <Image
+              src={logoImageUrl || "/placeholder.svg"}
+              alt={logoText || "Logo"}
+              width={logoMaxWidth}
+              height={Math.round(logoMaxWidth * 0.5)}
+              className="h-auto object-contain transition-opacity"
+              style={{ maxWidth: logoMaxWidth, maxHeight: 48 }}
+              priority
+            />
+          ) : (
+            <span
+              className={`text-4xl font-hero transition-colors ${
+                shouldUseTransparentHeader ? "text-secondary" : "text-secondary"
+              }`}
+            >
+              {logoText}
+            </span>
+          )}
         </Link>
 
         <div className="flex items-center gap-2 lg:flex-1 lg:justify-end">
