@@ -14,7 +14,6 @@ export function TextMarquee({ text, speed = 30 }: TextMarqueeProps) {
           animation: `marquee ${speed}s linear infinite`,
         }}
       >
-        {/* Repeat text multiple times for seamless loop */}
         {Array.from({ length: 10 }).map((_, i) => (
           <span
             key={i}

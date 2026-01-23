@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/react"
+import type { Preview } from "@storybook/nextjs"
 import "../app/globals.css"
 
 const preview: Preview = {
@@ -10,15 +10,15 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: "light",
-      values: [
-        { name: "light", value: "#ffffff" },
-        { name: "dark", value: "#0a0a0a" },
-        { name: "gray", value: "#f5f5f5" },
-      ],
+      options: {
+        light: { name: "light", value: "#ffffff" },
+        dark: { name: "dark", value: "#0a0a0a" },
+        gray: { name: "gray", value: "#f5f5f5" }
+      }
     },
     layout: "centered",
   },
+
   decorators: [
     (Story) => (
       <div className="font-sans">
@@ -26,6 +26,12 @@ const preview: Preview = {
       </div>
     ),
   ],
+
+  initialGlobals: {
+    backgrounds: {
+      value: "light"
+    }
+  }
 }
 
 export default preview
