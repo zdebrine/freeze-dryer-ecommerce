@@ -53,13 +53,11 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Dashboard</h1>
         <p className="text-sm text-muted-foreground sm:text-base">Overview of your coffee freeze-drying operations</p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>
@@ -75,7 +73,6 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Recent Orders */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Orders</CardTitle>

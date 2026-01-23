@@ -1,0 +1,54 @@
+
+> my-v0-project@0.1.0 build-storybook /Users/zakerydebrine/code/freeze-dryer-ecommerce
+> storybook build --output-dir=/var/folders/7h/976vlg1x2jx6g_ln5_rxk1880000gn/T/chromatic--69408-ULOTLNoXfwpL
+
+
+[90m┌[39m  Building storybook v10.2.0
+[90m│[39m
+[32m◇[39m  Cleaning outputDir:
+[90m│[39m  [36m../../../../var/folders/7h/976vlg1x2jx6g_ln5_rxk1880000gn/T/chromatic--69408-ULOTLNoXfwpL[39m
+[90m│[39m
+[32m◇[39m  Loading presets
+[90m│[39m
+[32m◇[39m  Building manager..
+[90m│[39m
+[34m●[39m  Building preview..
+[90m│[39m
+[33m▲[39m  No story files found for the specified pattern:
+[90m│[39m  [34mcomponents/**/*.stories.@(js|jsx|mjs|ts|tsx)[39m
+[90m│[39m
+[34m●[39m  Addon-docs: using MDX3
+[90m│[39m
+[34m●[39m  Copying static files: [36mpublic[39m at
+[90m│[39m  [36m../../../../var/folders/7h/976vlg1x2jx6g_ln5_rxk1880000gn/T/chromatic--69408-ULOTLNoXfwpL[39m
+[90m│[39m
+[34m●[39m  Using implicit CSS loaders
+[90m│[39m
+[34m●[39m  Using SWC as compiler
+[90m│[39m
+[34m●[39m  Using default Webpack5 setup
+[90m│[39m
+[33m▲[39m  asset size limit: The following asset(s) exceed the recommended size
+[90m│[39m  limit (244 KiB).
+[90m│[39m  This can impact web performance.
+[90m│[39m  Assets:
+[90m│[39m  582.999845cb.iframe.bundle.js (428 KiB)
+[90m│[39m  322.b9dd74ed.iframe.bundle.js (812 KiB)
+[90m│[39m  724.e22397e8.iframe.bundle.js (1.05 MiB)
+[90m│[39m  356.d925e708.iframe.bundle.js (1.25 MiB)
+[90m│[39m
+[33m▲[39m  entrypoint size limit: The following entrypoint(s) combined asset size
+[90m│[39m  exceeds the recommended limit (244 KiB). This can impact web
+[90m│[39m  performance.
+[90m│[39m  Entrypoints:
+[90m│[39m  main (1.47 MiB)
+[90m│[39m  runtime~main.291a229c.iframe.bundle.js
+[90m│[39m  356.d925e708.iframe.bundle.js
+[90m│[39m  main.8fec8a9f.iframe.bundle.js
+
+[90m│[39m
+[32m◇[39m  Output directory:
+[90m│[39m  /var/folders/7h/976vlg1x2jx6g_ln5_rxk1880000gn/T/chromatic--69408-ULOTLNoXfwpL
+[90m│[39m
+[90m└[39m  Storybook build completed successfully
+
