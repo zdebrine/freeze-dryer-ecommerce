@@ -39,7 +39,7 @@ export function AdminSidebar() {
           width={300}
           height={20}
           priority
-          className="h-auto md:w-[100px] w-[90px]"
+          className="h-auto md:w-[200px] w-[150px]"
         />
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -68,7 +68,7 @@ export function AdminSidebar() {
           width={300}
           height={60}
           priority
-          className="h-auto md:w-[100x] w-[90px]"
+          className="h-auto md:w-[200px] w-[150px]"
         />
         </div>
 
