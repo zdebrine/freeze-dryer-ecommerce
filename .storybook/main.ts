@@ -6,20 +6,21 @@ const config: StorybookConfig = {
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
     "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
-
   addons: [
     "@storybook/addon-onboarding",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
     "@storybook/addon-links",
     "@storybook/addon-a11y",
-    "@storybook/addon-docs"
   ],
-
   framework: {
     name: "@storybook/nextjs",
     options: {},
   },
-
-  staticDirs: ["../public"]
+  staticDirs: ["../public"],
+  docs: {
+    autodocs: "tag",
+  },
 }
 
 export default config
