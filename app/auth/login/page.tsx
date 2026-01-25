@@ -56,7 +56,7 @@ export default function LoginPage() {
         <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
           alt="Soluble"
-          width={180}
+          width={100}
           height={60}
           priority
           className="h-auto w-auto"
