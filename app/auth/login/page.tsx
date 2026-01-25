@@ -1,15 +1,16 @@
 "use client"
 
-import type React from "react"
+import { useState } from "react"
+import type { FormEvent } from "react"
+import NextImage from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -18,51 +19,57 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
+
+    const supabase = createClient()
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-
       if (error) throw error
+      if (!data.user) throw new Error("No user returned from sign in.")
 
-      // Get user profile to determine role
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).single()
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single()
 
-      // Redirect based on role
-      if (profile ?.role === "admin") {
-        router.push("/admin")
-      } else {
-        router.push("/client")
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+      if (profileError) throw profileError
+
+      router.push(profile?.role === "admin" ? "/admin" : "/client")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-svh w-full flex-col gap-4 items-center justify-center p-6 md:p-10 bg-background">
-      <Link href="/" >
-        <span
-          className={`text-5xl font-hero text-primary`}
-        >
-          CoffeeOS
-        </span>
+    <div className="flex min-h-svh w-full flex-col items-center justify-center gap-4 bg-background p-6 md:p-10">
+      <Link href="/" className="inline-flex items-center">
+        <NextImage
+          src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
+          alt="Soluble"
+          width={300}
+          height={60}
+          priority
+          className="h-auto w-[300px]"
+        />
       </Link>
+
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-bold">Login</CardTitle>
             <CardDescription>Enter your credentials to access your account</CardDescription>
           </CardHeader>
+
           <CardContent>
             <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-6">
@@ -77,6 +84,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -87,14 +95,21 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                {error && <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
+
+                {error && (
+                  <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                    {error}
+                  </div>
+                )}
+
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
               </div>
+
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{" "}
-                <Link href="/auth/signup" className="text-primary hover:underline underline-offset-4">
+                <Link href="/auth/signup" className="text-primary underline-offset-4 hover:underline">
                   Sign up
                 </Link>
               </div>

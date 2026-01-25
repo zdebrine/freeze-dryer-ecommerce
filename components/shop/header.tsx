@@ -39,6 +39,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
       setIsScrolled(window.scrollY > 150)
     }
 
+    // Set initial state based on current scroll position
     checkScroll()
 
     window.addEventListener("scroll", checkScroll)
@@ -78,7 +79,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
         shouldUseTransparentHeader ? "bg-transparent border-secondary/10" : "bg-primary/95 backdrop-blur-sm"
       }`}
     >
-      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <nav className="hidden lg:flex items-center gap-6 flex-1">
           {navLinks.map((l, idx) => {
             const linkProps = isExternalUrl(l.href)
@@ -139,7 +140,7 @@ export function ShopHeader({ config }: { config?: HeaderConfig }) {
               width={logoMaxWidth}
               height={Math.round(logoMaxWidth * 0.5)}
               className="h-auto object-contain transition-opacity"
-              style={{ maxWidth: logoMaxWidth, maxHeight: 60 }}
+              style={{ maxWidth: logoMaxWidth, maxHeight: 48 }}
               priority
             />
           ) : (

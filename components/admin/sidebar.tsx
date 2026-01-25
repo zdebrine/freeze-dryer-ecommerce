@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import NextImage from "next/image"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -32,7 +33,14 @@ export function AdminSidebar() {
     <>
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="text-2xl text-primary font-hero">CoffeeOS</span>
+          <NextImage
+          src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
+          alt="Soluble"
+          width={300}
+          height={60}
+          priority
+          className="h-auto w-[300px]"
+        />
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -54,7 +62,14 @@ export function AdminSidebar() {
       >
         {/* Logo - hidden on mobile, shown on desktop */}
         <div className="hidden h-16 items-center gap-2 border-b px-6 lg:flex">
-          <span className="text-3xl text-primary font-hero">CoffeeOS</span>
+          <NextImage
+          src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
+          alt="Soluble"
+          width={300}
+          height={60}
+          priority
+          className="h-auto w-[300px]"
+        />
         </div>
 
         {/* Navigation */}

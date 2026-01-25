@@ -5,6 +5,13 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "7h5xvtepdiugpp9l.public.blob.vercel-storage.com",
+        pathname: "/**",
+      },
+    ],
   },
  
 }
