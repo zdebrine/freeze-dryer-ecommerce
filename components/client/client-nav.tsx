@@ -27,7 +27,7 @@ export function ClientNav() {
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between p-4">
         {/* Logo */}
         <Link href="/client" className="flex items-center gap-2">
           <NextImage
@@ -36,7 +36,7 @@ export function ClientNav() {
           width={300}
           height={60}
           priority
-          className="h-auto w-[300px]"
+          className="h-auto md:w-[300px] w-[150px]"
         />
         </Link>
 
