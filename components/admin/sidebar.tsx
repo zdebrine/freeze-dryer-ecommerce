@@ -31,7 +31,7 @@ export function AdminSidebar() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background px-4 lg:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background p-4 lg:hidden">
         <div className="flex items-center gap-2">
           <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
@@ -39,7 +39,7 @@ export function AdminSidebar() {
           width={300}
           height={60}
           priority
-          className="h-auto w-[300px]"
+          className="h-auto md:w-[300px] w-[150px]"
         />
         </div>
         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
