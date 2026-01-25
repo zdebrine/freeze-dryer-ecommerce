@@ -27,16 +27,16 @@ export function ClientNav() {
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between p-4 mt-4">
         {/* Logo */}
         <Link href="/client" className="flex items-center gap-2">
           <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
           alt="Soluble"
           width={300}
-          height={60}
+          height={20}
           priority
-          className="h-auto w-[300px]"
+          className="h-auto md:w-[200px] w-[150px]"
         />
         </Link>
 
