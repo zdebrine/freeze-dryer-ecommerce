@@ -52,16 +52,10 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-svh w-full flex-col gap-4 items-center justify-center p-6 md:p-10 bg-background">
       <Link href="/" >
-      <Image
-                      src={"https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"}
-                      fill
-                      width={10}
-                      height={10}
-                    />
         <span
           className={`text-5xl font-hero text-primary`}
         >
-          CoffeeOS
+          SOLUBLE
         </span>
       </Link>
       <div className="w-full max-w-sm">
