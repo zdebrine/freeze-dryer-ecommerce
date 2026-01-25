@@ -61,14 +61,14 @@ export function AdminSidebar() {
         )}
       >
         {/* Logo - hidden on mobile, shown on desktop */}
-        <div className="hidden h-16 items-center gap-2 border-b px-6 lg:flex">
+        <div className="hidden h-16 items-center gap-2 border-b p-6 lg:flex">
           <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
           alt="Soluble"
           width={300}
           height={60}
           priority
-          className="h-auto w-[300px]"
+          className="h-auto md:w-[300px] w-[150px]"
         />
         </div>
 
