@@ -36,7 +36,7 @@ export function ClientNav() {
           width={300}
           height={20}
           priority
-          className="h-auto md:w-[100px] w-[90px]"
+          className="h-auto md:w-[200px] w-[150px]"
         />
         </Link>
 
