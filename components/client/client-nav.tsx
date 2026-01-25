@@ -34,9 +34,9 @@ export function ClientNav() {
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
           alt="Soluble"
           width={300}
-          height={60}
+          height={20}
           priority
-          className="h-auto md:w-[300px] w-[150px]"
+          className="h-auto md:w-[100px] w-[90px]"
         />
         </Link>
 
