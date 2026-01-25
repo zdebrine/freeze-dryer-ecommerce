@@ -31,7 +31,7 @@ export function AdminSidebar() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background p-4 lg:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-background p-4 mt-4 lg:hidden">
         <div className="flex items-center gap-2">
           <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
@@ -61,7 +61,7 @@ export function AdminSidebar() {
         )}
       >
         {/* Logo - hidden on mobile, shown on desktop */}
-        <div className="hidden h-16 items-center gap-2 border-b p-6 lg:flex">
+        <div className="hidden h-16 items-center gap-2 border-b p-6 mt-4 lg:flex">
           <NextImage
           src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
           alt="Soluble"
