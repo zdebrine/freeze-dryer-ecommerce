@@ -59,7 +59,7 @@ export default function LoginPage() {
           width={100}
           height={60}
           priority
-          className="h-auto w-auto"
+          className="h-[50px] w-[100px]"
         />
       </Link>
 
