@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import NextImage from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -29,7 +30,14 @@ export function ClientNav() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/client" className="flex items-center gap-2">
-          <span className="text-2xl font-hero text-primary sm:text-3xl">CoffeeOS</span>
+          <NextImage
+          src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
+          alt="Soluble"
+          width={300}
+          height={60}
+          priority
+          className="h-auto w-[300px]"
+        />
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
