@@ -51,13 +51,16 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-svh w-full flex-col gap-4 items-center justify-center p-6 md:p-10 bg-background">
-      <Link href="/" >
-        <span
-          className={`text-5xl font-hero text-primary`}
-        >
-          SOLUBLE
-        </span>
-      </Link>
+     <Link href="/" className="inline-flex items-center">
+  <Image
+    src="https://7h5xvtepdiugpp9l.public.blob.vercel-storage.com/Soluble.png"
+    alt="Soluble"
+    width={180}
+    height={60}
+    priority
+    className="h-auto w-auto"
+  />
+</Link>
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="space-y-2">
