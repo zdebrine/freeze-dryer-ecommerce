@@ -57,11 +57,11 @@ export default function LoginPage() {
                       fill
                       sizes="(max-width: 250px) 50vw, 25vw"
                     />
-        <span
+        {/* <span
           className={`text-5xl font-hero text-primary`}
         >
           CoffeeOS
-        </span>
+        </span> */}
       </Link>
       <div className="w-full max-w-sm">
         <Card>
